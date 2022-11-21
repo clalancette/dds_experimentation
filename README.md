@@ -158,7 +158,7 @@ struct HelloWorld_v3
 
 |    |      Fast DDS      |  Cyclone DDS |  RTI Connext |
 |----------|:--:|:--:|:--:|
-| **Same Type Name**: <br> `HelloWorld_v1.idl` with `HelloWorld_v1.idl` |
+| **Same Type Name** <br> `HelloWorld_v1.idl` with `HelloWorld_v1.idl` |
 | `V1T1` with `V1T2` | &check; | &cross; | &check; |
 | `V1T1` with `V1T3` | &check; | &cross; | &cross; |
 | `V1T2` with `V1T3` | &check; | &cross; | &cross; |
@@ -181,7 +181,7 @@ struct HelloWorld_v3
 ## Fast DDS
 ### Create Env
 
-Refered to [eprosima official doc](https://fast-dds.docs.eprosima.com/en/latest/installation/sources/sources_linux.html)
+Refer to [eprosima official doc](https://fast-dds.docs.eprosima.com/en/latest/installation/sources/sources_linux.html)
 
 ```bash
 mkdir fastdds_ws
@@ -193,7 +193,7 @@ vcs import src < fastrtps.repos
 
 ### Testing dynamic msg pubsub
 
-Refered to [this](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dynamic_types/examples.html) from eprosima
+Refer to [this](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dynamic_types/examples.html) from eprosima
 
 ```bash
 cd /fastdds_ws
