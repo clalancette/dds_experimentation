@@ -99,6 +99,28 @@ int main (int argc, char ** argv)
     return 2;
   }
 
+#if defined(V1T1)
+  printf("Publishing type V1T1\n");
+#elif defined(V1T2)
+  printf("Publishing type V1T2\n");
+#elif defined(V1T3)
+  printf("Publishing type V1T3\n");
+#elif defined(V2T1)
+  printf("Publishing type V2T1\n");
+#elif defined(V2T2)
+  printf("Publishing type V2T2\n");
+#elif defined(V2T3)
+  printf("Publishing type V2T3\n");
+#elif defined(V2T4)
+  printf("Publishing type V2T4\n");
+#elif defined(V3T1)
+  printf("Publishing type V3T1\n");
+#elif defined(V3T2)
+  printf("Publishing type V3T2\n");
+#elif defined(V3T3)
+  printf("Publishing type V3T2\n");
+#endif
+
   /* Create a Participant. */
   participant = dds_create_participant (DDS_DOMAIN_DEFAULT, NULL, NULL);
   if (participant < 0)
