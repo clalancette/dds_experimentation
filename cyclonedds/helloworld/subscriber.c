@@ -61,7 +61,7 @@ int main (int argc, char ** argv)
 
   /* create listener*/
   dds_listener_t* listener;
-  listener = dds_listener_create(NULL);
+  listener = dds_create_listener(NULL);
   dds_lset_inconsistent_topic(listener, inconsistent_topic_cb);
   dds_lset_data_available(listener, data_available_handler);
 
