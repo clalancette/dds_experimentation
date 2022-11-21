@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "HelloWorld_v1.h"
 #include "HelloWorld_v1t1.h"
 #include "HelloWorld_v1t2.h"
 #include "HelloWorld_v1t3.h"
@@ -15,20 +14,6 @@
 #include "HelloWorld_v3t1.h"
 #include "HelloWorld_v3t2.h"
 #include "HelloWorld_v3t3.h"
-
-#if MSG_VERSION == 1
-  #include "HelloWorld_v1.h"
-  #define HelloWorld_VX_Msg_desc HelloWorld_v1_Msg_desc
-  #define HelloWorld_VX_Msg__alloc HelloWorld_v1_Msg__alloc
-  #define HelloWorld_VX_Msg HelloWorld_v1_Msg
-  #define HelloWorld_VX_Msg_free HelloWorld_v1_Msg_free
-#elif MSG_VERSION == 2
-  #include "HelloWorld_v2.h"
-  #define HelloWorld_VX_Msg_desc HelloWorld_v2_Msg_desc
-  #define HelloWorld_VX_Msg__alloc HelloWorld_v2_Msg__alloc
-  #define HelloWorld_VX_Msg HelloWorld_v2_Msg
-  #define HelloWorld_VX_Msg_free HelloWorld_v2_Msg_free
-#endif
 
 /* An array of one message (aka sample in dds terms) will be used. */
 #define MAX_SAMPLES 1
@@ -48,24 +33,6 @@ static void data_available_handler (dds_entity_t reader, void *arg)
 
 //  (void)arg;
 //  (void) do_take (reader);
-}
-
-static void * alloc_v1()
-{
-  return HelloWorld_v1_Msg__alloc();
-}
-
-static void free_v1(void * data)
-{
-  HelloWorld_v1_Msg_free(data, DDS_FREE_ALL);
-}
-
-static void print_v1(const void * const data)
-{
-  HelloWorld_v1_Msg *msg = (HelloWorld_v1_Msg*) data;
-  printf ("=== [Subscriber] Received : ");
-  printf ("Message (%"PRId32", %s)\n", msg->index, msg->message);
-  fflush (stdout);
 }
 
 static void * alloc_v1t1()
@@ -253,13 +220,6 @@ int main (int argc, char ** argv)
   dds_entity_t participant;
   dds_entity_t topic;
   dds_entity_t reader;
-  #if MSG_VERSION == 1
-    HelloWorld_v1_Msg *msg;
-  #elif MSG_VERSION == 2
-    HelloWorld_v2_Msg *msg;
-  #elif MSG_VERSION == 3
-    HelloWorld_v3_Msg *msg;
-  #endif
 
   void *samples[MAX_SAMPLES];
   dds_sample_info_t infos[MAX_SAMPLES];
@@ -331,11 +291,6 @@ int main (int argc, char ** argv)
     fprintf(stderr, "Invalid argument; must be one of v1t1, v1t2, v1t3, v2t1, v2t2, v2t3, v2t4, v3t1, v3t2, v3t3\n");
     return 2;
   }
-
-  descriptor = &HelloWorld_v1_Msg_desc;
-  alloc_msg = alloc_v1;
-  free_msg = free_v1;
-  print_msg = print_v1;
 
   /* create listener*/
   dds_listener_t* listener;

@@ -23,7 +23,7 @@ endif()
 # the proper data types and compiles them into a library.
 idlc_generate(
   TARGET HelloWorld_msg_lib
-  FILES "HelloWorld_v1.idl" "HelloWorld_v2.idl" "HelloWorld_v1t1.idl" "HelloWorld_v1t2.idl" "HelloWorld_v1t3.idl" "HelloWorld_v2t1.idl" "HelloWorld_v2t2.idl" "HelloWorld_v2t3.idl" "HelloWorld_v2t4.idl" "HelloWorld_v3t1.idl" "HelloWorld_v3t2.idl" "HelloWorld_v3t3.idl"
+  FILES "HelloWorld_v1t1.idl" "HelloWorld_v1t2.idl" "HelloWorld_v1t3.idl" "HelloWorld_v2t1.idl" "HelloWorld_v2t2.idl" "HelloWorld_v2t3.idl" "HelloWorld_v2t4.idl" "HelloWorld_v3t1.idl" "HelloWorld_v3t2.idl" "HelloWorld_v3t3.idl"
   WARNINGS no-implicit-extensibility
 )
 

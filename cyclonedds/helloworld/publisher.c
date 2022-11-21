@@ -1,5 +1,4 @@
 #include "dds/dds.h"
-#include "HelloWorld_v1.h"
 #include "HelloWorld_v1t1.h"
 #include "HelloWorld_v1t2.h"
 #include "HelloWorld_v1t3.h"
@@ -184,23 +183,6 @@ static void send_data_v3t3(int i, dds_entity_t writer)
     DDS_FATAL("dds_write: %s\n", dds_strretcode(-rc));
 }
 
-static void send_data_v1(int i, dds_entity_t writer)
-{
-  HelloWorld_v1_Msg msg;
-  dds_return_t rc;
-
-  msg.index = i;
-  msg.message = "Hello World";
-
-  printf ("=== [Publisher]  Writing : ");
-  printf ("Message (%"PRId32", %s)\n", msg.index, msg.message);
-  fflush (stdout);
-
-  rc = dds_write (writer, &msg);
-  if (rc != DDS_RETCODE_OK)
-    DDS_FATAL("dds_write: %s\n", dds_strretcode(-rc));
-}
-
 int main (int argc, char ** argv)
 {
   dds_entity_t participant;
@@ -251,9 +233,6 @@ int main (int argc, char ** argv)
     fprintf(stderr, "Invalid argument; must be one of v1t1, v1t2, v1t3, v2t1, v2t2, v2t3, v2t4, v3t1, v3t2, v3t3\n");
     return 2;
   }
-
-  descriptor = &HelloWorld_v1_Msg_desc;
-  send_data = send_data_v1;
 
   /* Create a Participant. */
   participant = dds_create_participant (DDS_DOMAIN_DEFAULT, NULL, NULL);
