@@ -172,16 +172,16 @@ struct HelloWorld_v3
 | `V2T4` with `V3T2` | &cross; | &cross; | &check; |
 | `V2T4` with `V3T3` | &cross; | &cross; | &cross; |
 
-*-`fastdds` is tested with `fastdds/HelloWorldExample/`
--`cyclonedds` is tested with `cyclonedds/helloworld/`
--`rticonnext` is tested with `rticonnext/hello_world_example/c++11/`*
+* -`fastdds` is tested with `fastdds/HelloWorldExample/`
+* -`cyclonedds` is tested with `cyclonedds/helloworld/`
+* -`rticonnext` is tested with `rticonnext/hello_world_example/c++11/`*
 
 ---
 
 ## Fast DDS
 ### Create Env
 
-Refered to [eproxima official doc](https://fast-dds.docs.eprosima.com/en/latest/installation/sources/sources_linux.html)
+Refered to [eprosima official doc](https://fast-dds.docs.eprosima.com/en/latest/installation/sources/sources_linux.html)
 
 ```bash
 mkdir fastdds_ws
@@ -193,11 +193,11 @@ vcs import src < fastrtps.repos
 
 ### Testing dynamic msg pubsub
 
-Refered to [this](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dynamic_types/examples.html) from eproxima
+Refered to [this](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dynamic_types/examples.html) from eprosima
 
 ```bash
 cd /fastdds_ws
-source install/setup.bash 
+source install/setup.bash
 cd src/dds_experimentation/fastdds/DynamicHelloWorldExample
 mkdir build
 cmake ..
@@ -206,9 +206,9 @@ make -j4
 
 Run pub sub in 2 different terminals
 ```bash
-# In the first one launch: 
+# In the first one launch:
 ./DDSDynamicHelloWorldExample publisher
-# In the second one: 
+# In the second one:
 ./DDSDynamicHelloWorldExample subscriber
 ```
 
@@ -232,21 +232,21 @@ java -jar ~/fastdds_ws/src/fastddsgen/share/fastddsgen/java/fastddsgen.jar Hello
 mkdir build && cd build
 cmake .. && make -j4
 
-# run 
+# run
 ./DDSHelloWorldExample publisher
 ./DDSHelloWorldExample subscriber
 ```
 
 ### Testing with incompatible topic detection
 
-Modified the HelloWorldExample script (`~/Fast-DDS/examples/C++/DDS/HelloWorldExample/build`), and let the publisher publishes an incompatible topic. 
+Modified the HelloWorldExample script (`~/Fast-DDS/examples/C++/DDS/HelloWorldExample/build`), and let the publisher publishes an incompatible topic.
 
-Provide listener class member to `create_topic()` function. However, currently the `TopicListener::on_inconsistent_topic()` callback is not working as it isn't yet being implemented (refer [here](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/topic/topicListener/topicListener.html)). 
+Provide listener class member to `create_topic()` function. However, currently the `TopicListener::on_inconsistent_topic()` callback is not working as it isn't yet being implemented (refer [here](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/topic/topicListener/topicListener.html)).
 
 
 ### Parsing UserDataQosPolicy
 
-*Working in progress in `HellowWorldExample`*
+*Work in progress in `HelloWorldExample`*
 
 ---
 
@@ -301,7 +301,7 @@ SubscriberListener: on_data_on_readers()
 
 ### Hello world example:
 
-Originated from [here](https://github.com/rticommunity/rticonnextdds-getting-started/tree/master/2_hello_world). During build, the `connextdds_add_example.cmake` will generate cpp headers according to `.idl`. 
+Originated from [here](https://github.com/rticommunity/rticonnextdds-getting-started/tree/master/2_hello_world). During build, the `connextdds_add_example.cmake` will generate cpp headers according to `.idl`.
 ```bash
 cd hello_world_example
 mkdir build cd build
@@ -321,7 +321,7 @@ Run pub sub
 
 Install with colcon, refer to [this](https://docs.ros.org/en/foxy/Installation/DDS-Implementations/Working-with-Eclipse-CycloneDDS.html#build-from-source-code)
 
-Testout modified [helloworld](https://github.com/eclipse-cyclonedds/cyclonedds/tree/master/examples/helloworld) code, with `on_inconsistent_topic` callback of cyclonedds C api, defined [here](https://github.com/eclipse-cyclonedds/cyclonedds/blob/363e47598262011e1ad386f16cbb4a28c48ff13d/src/core/ddsc/include/dds/ddsc/dds_public_listener.h#L32)
+Test modified [helloworld](https://github.com/eclipse-cyclonedds/cyclonedds/tree/master/examples/helloworld) code, with `on_inconsistent_topic` callback of cyclonedds C api, defined [here](https://github.com/eclipse-cyclonedds/cyclonedds/blob/363e47598262011e1ad386f16cbb4a28c48ff13d/src/core/ddsc/include/dds/ddsc/dds_public_listener.h#L32)
 
 ```
 source ~/cyclonedds_ws/install/setup.bash
