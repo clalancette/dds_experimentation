@@ -163,7 +163,7 @@ struct HelloWorld_v3
 | `V1T1` with `V1T3` | &check; | &cross; | &cross; |
 | `V1T2` with `V1T3` | &check; | &cross; | &cross; |
 | **Mismatch Type Name** <br> `HelloWorld_v1.idl` with `HelloWorld_v2.idl` |
-| `V1T1` with `V2T1` | &cross; | &cross; | &check; |
+| `V1T1` with `V2T1` | &cross; | &check; | &check; |
 | `V1T1` with `V2T2` | &cross; | &cross; | &check; |
 | `V1T1` with `V2T3` | &cross; | &cross; | &cross; |
 | `V1T1` with `V2T4` | &cross; | &cross; | &check; |

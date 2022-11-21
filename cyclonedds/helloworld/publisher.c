@@ -42,14 +42,26 @@ static void send_data_v2(int i, dds_entity_t writer)
 
 static void send_data_v3(int i, dds_entity_t writer)
 {
+  // T1 TYPE_MAP_CDR_SZ_HelloWorld_v3 == 326u
+  // T2 TYPE_MAP_CDR_SZ_HelloWorld_v3 == 278u
+  // T3 TYPE_MAP_CDR_SZ_HelloWorld_v3 == 278u
+
   HelloWorld_v3 msg;
   dds_return_t rc;
 
   msg.index = i;
+
+#if TYPE_MAP_CDR_SZ_HelloWorld_v3 == 278
+  // T2 or T3, message is a string
   msg.message = "Hello World";
+  printf ("Message (%"PRId32", %s)\n", msg.index, msg.message);
+#elif TYPE_MAP_CDR_SZ_HelloWorld_v3 == 326
+  // T1, message is a float
+  msg.message = 54.34;
+  printf ("Message (%"PRId32", %f)\n", msg.index, msg.message);
+#endif
 
   printf ("=== [Publisher]  Writing : ");
-  printf ("Message (%"PRId32", %s)\n", msg.index, msg.message);
   fflush (stdout);
 
   rc = dds_write (writer, &msg);
