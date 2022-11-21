@@ -51,17 +51,17 @@ static void send_data_v3(int i, dds_entity_t writer)
 
   msg.index = i;
 
-#if TYPE_MAP_CDR_SZ_HelloWorld_v3 == 278
-  // T2 or T3, message is a string
+  printf ("=== [Publisher]  Writing : ");
+#if defined(V3T1) || defined(V3T2)
+  // T1 or T2, message is a string
   msg.message = "Hello World";
   printf ("Message (%"PRId32", %s)\n", msg.index, msg.message);
-#elif TYPE_MAP_CDR_SZ_HelloWorld_v3 == 326
-  // T1, message is a float
+#elif defined(V3T3)
+  // T3, message is a float
   msg.message = 54.34;
   printf ("Message (%"PRId32", %f)\n", msg.index, msg.message);
 #endif
 
-  printf ("=== [Publisher]  Writing : ");
   fflush (stdout);
 
   rc = dds_write (writer, &msg);

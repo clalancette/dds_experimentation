@@ -65,7 +65,9 @@ idlc_generate(
 
 # Both executables have only one related source file.
 add_executable(HelloworldPublisher publisher.c)
+target_compile_definitions(HelloworldPublisher PRIVATE "V1${V1TYPE}" "V2${V2TYPE}" "V3${V3TYPE}")
 add_executable(HelloworldSubscriber subscriber.c)
+target_compile_definitions(HelloworldSubscriber PRIVATE "V1${V1TYPE}" "V2${V2TYPE}" "V3${V3TYPE}")
 
 # Both executables need to be linked to the idl data type library and
 # the ddsc API library.
