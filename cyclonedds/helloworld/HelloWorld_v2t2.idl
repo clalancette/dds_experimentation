@@ -1,0 +1,6 @@
+struct HelloWorld_v2t2
+{
+  unsigned long index;
+  string message;
+  float value;
+};
