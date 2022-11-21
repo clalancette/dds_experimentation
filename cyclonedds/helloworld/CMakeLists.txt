@@ -17,13 +17,49 @@ if(NOT TARGET CycloneDDS::ddsc)
   find_package(CycloneDDS REQUIRED)
 endif()
 
+option(V1TYPE "The type of V1 message to use, options are T1, T2, or T3")
+option(V2TYPE "The type of V2 message to use, options are T1, T2, T3, or T4")
+option(V3TYPE "The type of V3 message to use, options are T1, T2, or T3")
+
+if("${V1TYPE}" STREQUAL "T1")
+  file(COPY_FILE "HelloWorld_v1t1.idl" "HelloWorld_v1.idl")
+elseif("${V1TYPE}" STREQUAL "T2")
+  file(COPY_FILE "HelloWorld_v1t2.idl" "HelloWorld_v1.idl")
+elseif("${V1TYPE}" STREQUAL "T3")
+  file(COPY_FILE "HelloWorld_v1t3.idl" "HelloWorld_v1.idl")
+else()
+  message(FATAL_ERROR "V1TYPE must be specified as T1, T2, or T3")
+endif()
+
+if("${V2TYPE}" STREQUAL "T1")
+  file(COPY_FILE "HelloWorld_v2t1.idl" "HelloWorld_v2.idl")
+elseif("${V2TYPE}" STREQUAL "T2")
+  file(COPY_FILE "HelloWorld_v2t2.idl" "HelloWorld_v2.idl")
+elseif("${V2TYPE}" STREQUAL "T3")
+  file(COPY_FILE "HelloWorld_v2t3.idl" "HelloWorld_v2.idl")
+elseif("${V2TYPE}" STREQUAL "T4")
+  file(COPY_FILE "HelloWorld_v2t4.idl" "HelloWorld_v2.idl")
+else()
+  message(FATAL_ERROR "V2TYPE must be specified as T1, T2, T3, or T4")
+endif()
+
+if("${V3TYPE}" STREQUAL "T1")
+  file(COPY_FILE "HelloWorld_v3t1.idl" "HelloWorld_v3.idl")
+elseif("${V3TYPE}" STREQUAL "T2")
+  file(COPY_FILE "HelloWorld_v3t2.idl" "HelloWorld_v3.idl")
+elseif("${V3TYPE}" STREQUAL "T3")
+  file(COPY_FILE "HelloWorld_v3t3.idl" "HelloWorld_v3.idl")
+else()
+  message(FATAL_ERROR "V3TYPE must be specified as T1, T2, or T3")
+endif()
+
 # This is a convenience function, provided by the CycloneDDS package,
 # that will supply a library target related the the given idl file.
 # In short, it takes the idl file, generates the source files with
 # the proper data types and compiles them into a library.
 idlc_generate(
   TARGET HelloWorld_msg_lib
-  FILES "HelloWorld_v1t1.idl" "HelloWorld_v2t1.idl" "HelloWorld_v3t1.idl"
+  FILES "HelloWorld_v1.idl" "HelloWorld_v2.idl" "HelloWorld_v3.idl"
   WARNINGS no-implicit-extensibility
 )
 

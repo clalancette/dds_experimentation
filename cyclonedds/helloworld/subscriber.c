@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "HelloWorld_v1t1.h"
-#include "HelloWorld_v2t1.h"
-#include "HelloWorld_v3t1.h"
+#include "HelloWorld_v1.h"
+#include "HelloWorld_v2.h"
+#include "HelloWorld_v3.h"
 
 /* An array of one message (aka sample in dds terms) will be used. */
 #define MAX_SAMPLES 1
@@ -28,17 +28,17 @@ static void data_available_handler (dds_entity_t reader, void *arg)
 //  (void) do_take (reader);
 }
 
-static void * alloc_v1t1()
+static void * alloc_v1()
 {
   return HelloWorld_v1__alloc();
 }
 
-static void free_v1t1(void * data)
+static void free_v1(void * data)
 {
   HelloWorld_v1_free(data, DDS_FREE_ALL);
 }
 
-static void print_v1t1(const void * const data)
+static void print_v1(const void * const data)
 {
   HelloWorld_v1 *msg = (HelloWorld_v1*) data;
   printf ("=== [Subscriber] Received : ");
@@ -46,17 +46,17 @@ static void print_v1t1(const void * const data)
   fflush (stdout);
 }
 
-static void * alloc_v2t1()
+static void * alloc_v2()
 {
   return HelloWorld_v2__alloc();
 }
 
-static void free_v2t1(void * data)
+static void free_v2(void * data)
 {
   HelloWorld_v2_free(data, DDS_FREE_ALL);
 }
 
-static void print_v2t1(const void * const data)
+static void print_v2(const void * const data)
 {
   HelloWorld_v2 *msg = (HelloWorld_v2*) data;
   printf ("=== [Subscriber] Received : ");
@@ -64,17 +64,17 @@ static void print_v2t1(const void * const data)
   fflush (stdout);
 }
 
-static void * alloc_v3t1()
+static void * alloc_v3()
 {
   return HelloWorld_v3__alloc();
 }
 
-static void free_v3t1(void * data)
+static void free_v3(void * data)
 {
   HelloWorld_v3_free(data, DDS_FREE_ALL);
 }
 
-static void print_v3t1(const void * const data)
+static void print_v3(const void * const data)
 {
   HelloWorld_v3 *msg = (HelloWorld_v3*) data;
   printf ("=== [Subscriber] Received : ");
@@ -97,29 +97,29 @@ int main (int argc, char ** argv)
   void (*print_msg)(const void * const) = NULL;
 
   if (argc != 2) {
-    fprintf(stderr, "Usage: %s <v1t1|v2t1|v3t1>\n", argv[0]);
+    fprintf(stderr, "Usage: %s <v1|v2|v3>\n", argv[0]);
     return 1;
   }
 
   const char * type = argv[1];
   const dds_topic_descriptor_t * descriptor = NULL;
-  if (strcmp(type, "v1t1") == 0) {
+  if (strcmp(type, "v1") == 0) {
     descriptor = &HelloWorld_v1_desc;
-    alloc_msg = alloc_v1t1;
-    free_msg = free_v1t1;
-    print_msg = print_v1t1;
-  } else if (strcmp(type, "v2t1") == 0) {
+    alloc_msg = alloc_v1;
+    free_msg = free_v1;
+    print_msg = print_v1;
+  } else if (strcmp(type, "v2") == 0) {
     descriptor = &HelloWorld_v2_desc;
-    alloc_msg = alloc_v2t1;
-    free_msg = free_v2t1;
-    print_msg = print_v2t1;
-  } else if (strcmp(type, "v3t1") == 0) {
+    alloc_msg = alloc_v2;
+    free_msg = free_v2;
+    print_msg = print_v2;
+  } else if (strcmp(type, "v3") == 0) {
     descriptor = &HelloWorld_v3_desc;
-    alloc_msg = alloc_v3t1;
-    free_msg = free_v3t1;
-    print_msg = print_v3t1;
+    alloc_msg = alloc_v3;
+    free_msg = free_v3;
+    print_msg = print_v3;
   } else {
-    fprintf(stderr, "Invalid argument; must be one of v1t1, v2t1, v3t1\n");
+    fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
     return 2;
   }
 

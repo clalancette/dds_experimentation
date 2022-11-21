@@ -1,5 +1,5 @@
 @appendable
-struct HelloWorld_v3t3
+struct HelloWorld_v3
 {
   unsigned long index;
   float message;

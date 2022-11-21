@@ -1,4 +1,4 @@
-struct HelloWorld_v2t3
+struct HelloWorld_v2
 {
   short index;
   string message;

@@ -1,4 +1,4 @@
-struct HelloWorld_v1t2
+struct HelloWorld_v1
 {
   unsigned long index;
   string message;

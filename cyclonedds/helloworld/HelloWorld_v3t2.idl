@@ -1,5 +1,5 @@
 @appendable
-struct HelloWorld_v3t2
+struct HelloWorld_v3
 {
   unsigned long index;
   string message;

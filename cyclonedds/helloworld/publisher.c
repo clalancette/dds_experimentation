@@ -1,12 +1,12 @@
 #include "dds/dds.h"
-#include "HelloWorld_v1t1.h"
-#include "HelloWorld_v2t1.h"
-#include "HelloWorld_v3t1.h"
+#include "HelloWorld_v1.h"
+#include "HelloWorld_v2.h"
+#include "HelloWorld_v3.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-static void send_data_v1t1(int i, dds_entity_t writer)
+static void send_data_v1(int i, dds_entity_t writer)
 {
   HelloWorld_v1 msg;
   dds_return_t rc;
@@ -23,7 +23,7 @@ static void send_data_v1t1(int i, dds_entity_t writer)
     DDS_FATAL("dds_write: %s\n", dds_strretcode(-rc));
 }
 
-static void send_data_v2t1(int i, dds_entity_t writer)
+static void send_data_v2(int i, dds_entity_t writer)
 {
   HelloWorld_v2 msg;
   dds_return_t rc;
@@ -40,7 +40,7 @@ static void send_data_v2t1(int i, dds_entity_t writer)
     DDS_FATAL("dds_write: %s\n", dds_strretcode(-rc));
 }
 
-static void send_data_v3t1(int i, dds_entity_t writer)
+static void send_data_v3(int i, dds_entity_t writer)
 {
   HelloWorld_v3 msg;
   dds_return_t rc;
@@ -67,23 +67,23 @@ int main (int argc, char ** argv)
   void (*send_data)(int, dds_entity_t) = NULL;
 
   if (argc != 2) {
-    fprintf(stderr, "Usage: %s <v1t1|v2t1|v3t1>\n", argv[0]);
+    fprintf(stderr, "Usage: %s <v1|v2|v3>\n", argv[0]);
     return 1;
   }
 
   const char * type = argv[1];
   const dds_topic_descriptor_t * descriptor = NULL;
-  if (strcmp(type, "v1t1") == 0) {
+  if (strcmp(type, "v1") == 0) {
     descriptor = &HelloWorld_v1_desc;
-    send_data = send_data_v1t1;
-  } else if (strcmp(type, "v2t1") == 0) {
+    send_data = send_data_v1;
+  } else if (strcmp(type, "v2") == 0) {
     descriptor = &HelloWorld_v2_desc;
-    send_data = send_data_v2t1;
-  } else if (strcmp(type, "v3t1") == 0) {
+    send_data = send_data_v2;
+  } else if (strcmp(type, "v3") == 0) {
     descriptor = &HelloWorld_v3_desc;
-    send_data = send_data_v3t1;
+    send_data = send_data_v3;
   } else {
-    fprintf(stderr, "Invalid argument; must be one of v1t1, v2t1, v3t1\n");
+    fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
     return 2;
   }
 
