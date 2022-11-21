@@ -258,7 +258,6 @@ int main (int argc, char ** argv)
     print_msg = print_v2t1;
   } else if (strcmp(type, "v2t2") == 0) {
     descriptor = &HelloWorld_v2t2_desc;
-    descriptor = &HelloWorld_v2t1_desc;
     alloc_msg = alloc_v2t2;
     free_msg = free_v2t2;
     print_msg = print_v2t2;
