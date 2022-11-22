@@ -9,13 +9,12 @@
 #
 # SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 #
-project(helloword LANGUAGES C)
 cmake_minimum_required(VERSION 3.10)
 
-if(NOT TARGET CycloneDDS::ddsc)
-  # Find the CycloneDDS package.
-  find_package(CycloneDDS REQUIRED)
-endif()
+project(helloworld LANGUAGES C)
+
+# Find the CycloneDDS package.
+find_package(CycloneDDS REQUIRED)
 
 option(V1TYPE "The type of V1 message to use, options are T1, T2, or T3")
 option(V2TYPE "The type of V2 message to use, options are T1, T2, T3, or T4")

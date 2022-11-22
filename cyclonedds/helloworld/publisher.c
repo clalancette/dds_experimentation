@@ -91,38 +91,39 @@ int main (int argc, char ** argv)
   if (strcmp(type, "v1") == 0) {
     descriptor = &HelloWorld_v1_desc;
     send_data = send_data_v1;
+#if defined(V1T1)
+    printf("Publishing type V1T1\n");
+#elif defined(V1T2)
+    printf("Publishing type V1T2\n");
+#elif defined(V1T3)
+    printf("Publishing type V1T3\n");
+#endif
   } else if (strcmp(type, "v2") == 0) {
     descriptor = &HelloWorld_v2_desc;
     send_data = send_data_v2;
+#if defined(V2T1)
+    printf("Publishing type V2T1\n");
+#elif defined(V2T2)
+    printf("Publishing type V2T2\n");
+#elif defined(V2T3)
+    printf("Publishing type V2T3\n");
+#elif defined(V2T4)
+    printf("Publishing type V2T4\n");
+#endif
   } else if (strcmp(type, "v3") == 0) {
     descriptor = &HelloWorld_v3_desc;
     send_data = send_data_v3;
-  } else {
-    fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
-    return 2;
-  }
-
-#if defined(V1T1)
-  printf("Publishing type V1T1\n");
-#elif defined(V1T2)
-  printf("Publishing type V1T2\n");
-#elif defined(V1T3)
-  printf("Publishing type V1T3\n");
-#elif defined(V2T1)
-  printf("Publishing type V2T1\n");
-#elif defined(V2T2)
-  printf("Publishing type V2T2\n");
-#elif defined(V2T3)
-  printf("Publishing type V2T3\n");
-#elif defined(V2T4)
-  printf("Publishing type V2T4\n");
-#elif defined(V3T1)
+#if defined(V3T1)
   printf("Publishing type V3T1\n");
 #elif defined(V3T2)
   printf("Publishing type V3T2\n");
 #elif defined(V3T3)
   printf("Publishing type V3T2\n");
 #endif
+  } else {
+    fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
+    return 2;
+  }
 
   /* Create a Participant. */
   participant = dds_create_participant (DDS_DOMAIN_DEFAULT, NULL, NULL);

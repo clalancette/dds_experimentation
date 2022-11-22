@@ -28,7 +28,7 @@ public:
   virtual void run(uint32_t samples, uint32_t sleep_ms) = 0;
 };
 
-template<typename TYPE, typename PUBSUBTYPE>
+template<typename TYPE, typename PUBSUBTYPE, bool isV3>
 class HelloWorldPublisher final : public PubBase
 {
 public:
@@ -76,7 +76,15 @@ public:
     // ====================================================
 
     hello_.index(0);
-    hello_.message("Hello World");
+    if constexpr(isV3) {
+#if defined(V3T1) || defined(V3T2)
+      hello_.message("Hello World");
+#elif defined(V3T3)
+      hello_.message(54.34);
+#endif
+    } else {
+      hello_.message("Hello World");
+    }
     eprosima::fastdds::dds::DomainParticipantQos pqos;
     pqos.name("Participant_pub");
     pqos.user_data(user_data);
@@ -232,11 +240,35 @@ int main(int argc, char ** argv)
   std::unique_ptr<PubBase> mypub;
 
   if (type == "v1") {
-    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v1, HelloWorld_v1PubSubType>>();
+    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v1, HelloWorld_v1PubSubType, false>>();
+#if defined(V1T1)
+    printf("Publishing type V1T1\n");
+#elif defined(V1T2)
+    printf("Publishing type V1T2\n");
+#elif defined(V1T3)
+    printf("Publishing type V1T3\n");
+#endif
   } else if (type == "v2") {
-    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v2, HelloWorld_v2PubSubType>>();
+    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v2, HelloWorld_v2PubSubType, false>>();
+#if defined(V2T1)
+    printf("Publishing type V2T1\n");
+#elif defined(V2T2)
+    printf("Publishing type V2T2\n");
+#elif defined(V2T3)
+    printf("Publishing type V2T3\n");
+#elif defined(V2T4)
+    printf("Publishing type V2T4\n");
+#endif
   } else if (type == "v3") {
-    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v3, HelloWorld_v3PubSubType>>();
+    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v3, HelloWorld_v3PubSubType, true>>();
+#if defined(V3T1)
+    printf("Publishing type V3T1\n");
+#elif defined(V3T2)
+    printf("Publishing type V3T2\n");
+#elif defined(V3T3)
+    printf("Publishing type V3T2\n");
+#endif
+
   } else {
     fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
     return 2;

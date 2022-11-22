@@ -1,0 +1,7 @@
+@appendable
+struct HelloWorld_v3
+{
+  unsigned long index;
+  float message;
+  short value;
+};
