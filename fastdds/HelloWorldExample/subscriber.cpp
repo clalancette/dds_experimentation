@@ -178,7 +178,7 @@ private:
         if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE) {
           samples_++;
           // Print your structure data here.
-          std::cout << "Message " << msg.message() << " " << " RECEIVED" << std::endl;
+          std::cout << "Message " << msg.index() << ", " << msg.message() << std::endl;
         }
       }
     }

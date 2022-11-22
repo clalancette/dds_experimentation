@@ -1,5 +1,7 @@
 #include <chrono>
 #include <iostream>
+#include <memory>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -15,8 +17,18 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 #include "HelloWorld_v1PubSubTypes.h"
+#include "HelloWorld_v2PubSubTypes.h"
 
-class HelloWorldPublisher final
+class PubBase
+{
+public:
+  virtual bool init() = 0;
+
+  virtual void run(uint32_t samples, uint32_t sleep_ms) = 0;
+};
+
+template<typename TYPE, typename PUBSUBTYPE>
+class HelloWorldPublisher final : public PubBase
 {
 public:
 
@@ -25,7 +37,7 @@ public:
     publisher_(nullptr),
     topic_(nullptr),
     writer_(nullptr),
-    type_(new HelloWorld_v1PubSubType())
+    type_(new PUBSUBTYPE())
   {
   }
 
@@ -44,7 +56,7 @@ public:
   }
 
   //!Initialize
-  bool init()
+  bool init() override
   {
     // ====================================================
     /// experimentation with dds user_data
@@ -63,7 +75,7 @@ public:
     // ====================================================
 
     hello_.index(0);
-    hello_.message("HelloWorld");
+    hello_.message("Hello World");
     eprosima::fastdds::dds::DomainParticipantQos pqos;
     pqos.name("Participant_pub");
     pqos.user_data(user_data);
@@ -116,7 +128,7 @@ public:
   }
 
   //!Run for number samples
-  void run(uint32_t samples, uint32_t sleep_ms)
+  void run(uint32_t samples, uint32_t sleep_ms) override
   {
     stop_ = false;
     std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep_ms);
@@ -132,7 +144,7 @@ public:
 
 private:
 
-  HelloWorld_v1 hello_;
+  TYPE hello_;
 
   eprosima::fastdds::dds::DomainParticipant* participant_;
 
@@ -193,8 +205,8 @@ private:
         if (!publish()) {
           --i;
         } else {
-          std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                    << " SENT" << std::endl;
+          std::cout << "=== [Publisher]  Writing : " << std::endl;
+          std::cout << "Message: (" << hello_.index() << ", " << hello_.message() << ")" << std::endl;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
       }
@@ -204,17 +216,35 @@ private:
   eprosima::fastdds::dds::TypeSupport type_;
 };
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
-  HelloWorldPublisher mypub;
-  if (!mypub.init()) {
-    fprintf(stderr, "Failed to initialize publisher\n");
+  if (argc != 2) {
+    fprintf(stderr, "Usage: %s <v1|v2|v3>\n", argv[0]);
     return 1;
   }
 
   uint32_t count = 10;
   uint32_t sleep_ms = 100;
-  mypub.run(count, sleep_ms);
+
+  std::string type = argv[1];
+
+  std::unique_ptr<PubBase> mypub;
+
+  if (type == "v1") {
+    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v1, HelloWorld_v1PubSubType>>();
+  } else if (type == "v2") {
+    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v2, HelloWorld_v2PubSubType>>();
+  } else {
+    fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
+    return 2;
+  }
+
+  if (!mypub->init()) {
+    fprintf(stderr, "Failed to initialize publisher\n");
+    return 1;
+  }
+
+  mypub->run(count, sleep_ms);
 
   return 0;
 }

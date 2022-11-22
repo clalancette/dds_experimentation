@@ -39,7 +39,7 @@ add_custom_command(
   OUTPUT HelloWorld_v2.cxx HelloWorld_v2.h HelloWorld_v2PubSubTypes.cxx HelloWorld_v2PubSubTypes.h
 )
 
-add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1PubSubTypes.cxx HelloWorld_v1.cxx)
+add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1PubSubTypes.cxx HelloWorld_v1.cxx HelloWorld_v2PubSubTypes.cxx HelloWorld_v2.cxx)
 target_include_directories(HelloworldPublisher PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldPublisher fastrtps fastcdr)
 

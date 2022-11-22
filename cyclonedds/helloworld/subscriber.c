@@ -13,19 +13,15 @@
 
 static void inconsistent_topic_cb(dds_entity_t topic, const dds_inconsistent_topic_status_t status, void* arg)
 {
-    /* do stuff and things with the event */
+  /* do stuff and things with the event */
   printf("calling inconsistent!\n");
   fflush(stdout);
 }
 
 static void data_available_handler (dds_entity_t reader, void *arg)
 {
-
   printf("data avail\n");
   fflush(stdout);
-
-//  (void)arg;
-//  (void) do_take (reader);
 }
 
 static void * alloc_v1()

@@ -1,7 +1,5 @@
-@appendable
 struct HelloWorld_v2
 {
   unsigned long index;
   string message;
-  float value;
 };
