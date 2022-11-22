@@ -18,6 +18,7 @@
 
 #include "HelloWorld_v1PubSubTypes.h"
 #include "HelloWorld_v2PubSubTypes.h"
+#include "HelloWorld_v3PubSubTypes.h"
 
 class PubBase
 {
@@ -234,6 +235,8 @@ int main(int argc, char ** argv)
     mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v1, HelloWorld_v1PubSubType>>();
   } else if (type == "v2") {
     mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v2, HelloWorld_v2PubSubType>>();
+  } else if (type == "v3") {
+    mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v3, HelloWorld_v3PubSubType>>();
   } else {
     fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
     return 2;

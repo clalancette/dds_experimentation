@@ -39,10 +39,15 @@ add_custom_command(
   OUTPUT HelloWorld_v2.cxx HelloWorld_v2.h HelloWorld_v2PubSubTypes.cxx HelloWorld_v2PubSubTypes.h
 )
 
-add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1PubSubTypes.cxx HelloWorld_v1.cxx HelloWorld_v2PubSubTypes.cxx HelloWorld_v2.cxx)
+add_custom_command(
+  COMMAND /usr/bin/java -jar ${fastrtps_LIB_DIR}/../share/fastddsgen/java/fastddsgen.jar -replace ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_v3.idl
+  OUTPUT HelloWorld_v3.cxx HelloWorld_v3.h HelloWorld_v3PubSubTypes.cxx HelloWorld_v3PubSubTypes.h
+)
+
+add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1PubSubTypes.cxx HelloWorld_v1.cxx HelloWorld_v2PubSubTypes.cxx HelloWorld_v2.cxx HelloWorld_v3PubSubTypes.cxx HelloWorld_v3.cxx)
 target_include_directories(HelloworldPublisher PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldPublisher fastrtps fastcdr)
 
-add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1PubSubTypes.cxx HelloWorld_v1.cxx)
+add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1PubSubTypes.cxx HelloWorld_v1.cxx HelloWorld_v2PubSubTypes.cxx HelloWorld_v2.cxx HelloWorld_v3PubSubTypes.cxx HelloWorld_v3.cxx)
 target_include_directories(HelloworldSubscriber PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldSubscriber fastrtps fastcdr)
