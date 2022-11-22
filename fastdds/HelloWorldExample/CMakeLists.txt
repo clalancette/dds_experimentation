@@ -12,22 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 2.8.12)
-
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-    cmake_policy(SET CMP0048 NEW)
-endif()
+cmake_minimum_required(VERSION 3.5)
 
 project(DDSHelloWorldExample)
 
-# Find requirements
-if(NOT fastcdr_FOUND)
-    find_package(fastcdr REQUIRED)
-endif()
-
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps REQUIRED)
-endif()
+find_package(fastcdr REQUIRED)
+find_package(fastrtps REQUIRED)
 
 #Check C++11
 include(CheckCXXCompilerFlag)
@@ -39,15 +29,20 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-message(STATUS "Configuring HelloWorld example...")
-file(GLOB DDS_HELLOWORLD_EXAMPLE_SOURCES_CXX "*.cxx")
-file(GLOB DDS_HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
-
-add_executable(DDSHelloWorldExample ${DDS_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_HELLOWORLD_EXAMPLE_SOURCES_CPP})
-target_compile_definitions(DDSHelloWorldExample PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+add_custom_command(
+  COMMAND /usr/bin/java -jar ${fastrtps_LIB_DIR}/../share/fastddsgen/java/fastddsgen.jar -replace ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_v1.idl
+  OUTPUT HelloWorld_v1.cxx HelloWorld_v1.h HelloWorld_v1PubSubTypes.cxx HelloWorld_v1PubSubTypes.h
 )
-target_link_libraries(DDSHelloWorldExample fastrtps fastcdr)
-install(TARGETS DDSHelloWorldExample
-    RUNTIME DESTINATION examples/C++/DDS/HelloWorldExample/${BIN_INSTALL_DIR})
+
+add_custom_command(
+  COMMAND /usr/bin/java -jar ${fastrtps_LIB_DIR}/../share/fastddsgen/java/fastddsgen.jar -replace ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_v2.idl
+  OUTPUT HelloWorld_v2.cxx HelloWorld_v2.h HelloWorld_v2PubSubTypes.cxx HelloWorld_v2PubSubTypes.h
+)
+
+add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1PubSubTypes.cxx HelloWorld_v1.cxx)
+target_include_directories(HelloworldPublisher PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(HelloworldPublisher fastrtps fastcdr)
+
+add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1PubSubTypes.cxx HelloWorld_v1.cxx)
+target_include_directories(HelloworldSubscriber PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(HelloworldSubscriber fastrtps fastcdr)
