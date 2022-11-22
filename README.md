@@ -173,7 +173,7 @@ struct HelloWorld_v3
 | `V2T4` with `V3T3` | &cross; | &cross; | &cross; |
 
 * -`fastdds` is tested with `fastdds/HelloWorldExample/`
-* -`cyclonedds` is tested with `cyclonedds/helloworld/`
+* -`cyclonedds` is tested with `cyclonedds/helloworld/`, and CycloneDDS git hash d37952bd64007e5412f1a1eb734dbefc645086cf (latest on 2022-11-21)
 * -`rticonnext` is tested with `rticonnext/hello_world_example/c++11/`*
 
 ---

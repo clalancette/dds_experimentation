@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// As of 2022-11-22, CycloneDDS supports setting the inconsistent topic
+// callback, but will never call it.  See https://github.com/eclipse-cyclonedds/cyclonedds/blob/d37952bd64007e5412f1a1eb734dbefc645086cf/src/core/ddsc/src/dds_topic.c#L132-L162
+
 static void send_data_v1(int i, dds_entity_t writer)
 {
   HelloWorld_v1 msg;
