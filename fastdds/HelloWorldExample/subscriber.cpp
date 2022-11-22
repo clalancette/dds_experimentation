@@ -47,7 +47,7 @@ class SubBase
 public:
   virtual bool init() = 0;
 
-  virtual void run(uint32_t samples) = 0;
+  virtual void run() = 0;
 };
 
 template<typename TYPE, typename PUBSUBTYPE>
@@ -129,14 +129,14 @@ public:
   }
 
   //!RUN the subscriber
-  void run()
+  void run() override
   {
     std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
     std::cin.ignore();
   }
 
   //!Run the subscriber until number samples have been received.
-  void run(uint32_t number) override
+  void run(uint32_t number)
   {
     std::cout << "Subscriber running until " << number << " samples have been received" << std::endl;
     while (number > listener_.samples_) {
@@ -241,7 +241,7 @@ private:
 };
 
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <v1|v2|v3>\n", argv[0]);
@@ -267,7 +267,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  mysub->run(10);
+  mysub->run();
 
   return 0;
 }
