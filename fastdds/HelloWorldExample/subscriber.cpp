@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <thread>
 #include <vector>
 
@@ -17,29 +18,40 @@
 #include <fastdds/dds/topic/TopicListener.hpp>
 
 #include "HelloWorld_v1PubSubTypes.h"
+#include "HelloWorld_v2PubSubTypes.h"
+#include "HelloWorld_v3PubSubTypes.h"
 
 class CustomTopicListener final : public eprosima::fastdds::dds::TopicListener
 {
 public:
 
-    CustomTopicListener()
-    : TopicListener()
-    {
-      std::cout << " create custom topic listener" << std::endl;
-    }
+  CustomTopicListener()
+  : TopicListener()
+  {
+    std::cout << " create custom topic listener" << std::endl;
+  }
 
-    //// Not working
-    virtual void on_inconsistent_topic(
-      eprosima::fastdds::dds::Topic* topic,
-      eprosima::fastdds::dds::InconsistentTopicStatus status)
-    {
-      (void)topic;
-      (void)status;
-      std::cout << " Inconsistent topic received discovered" << std::endl;
-    }
+  //// Not working
+  virtual void on_inconsistent_topic(
+    eprosima::fastdds::dds::Topic* topic,
+    eprosima::fastdds::dds::InconsistentTopicStatus status)
+  {
+    (void)topic;
+    (void)status;
+    std::cout << " Inconsistent topic received discovered" << std::endl;
+  }
 };
 
-class HelloWorldSubscriber final
+class SubBase
+{
+public:
+  virtual bool init() = 0;
+
+  virtual void run(uint32_t samples) = 0;
+};
+
+template<typename TYPE, typename PUBSUBTYPE>
+class HelloWorldSubscriber final : public SubBase
 {
 public:
 
@@ -48,7 +60,7 @@ public:
     subscriber_(nullptr),
     topic_(nullptr),
     reader_(nullptr),
-    type_(new HelloWorld_v1PubSubType())
+    type_(new PUBSUBTYPE())
   {
   }
 
@@ -67,7 +79,7 @@ public:
   }
 
   //!Initialize the subscriber
-  bool init()
+  bool init() override
   {
     eprosima::fastdds::dds::DomainParticipantQos pqos;
     pqos.name("Participant_sub");
@@ -124,7 +136,7 @@ public:
   }
 
   //!Run the subscriber until number samples have been received.
-  void run(uint32_t number)
+  void run(uint32_t number) override
   {
     std::cout << "Subscriber running until " << number << " samples have been received" << std::endl;
     while (number > listener_.samples_) {
@@ -162,7 +174,7 @@ private:
       eprosima::fastdds::dds::DataReader* reader) override
     {
       eprosima::fastdds::dds::SampleInfo info;
-      HelloWorld_v1 msg;
+      TYPE msg;
 
       //// Note: experimentation
       eprosima::fastdds::dds::InstanceHandle_t no_handle;
@@ -231,14 +243,31 @@ private:
 
 int main(int argc, char** argv)
 {
-  HelloWorldSubscriber mysub;
+  if (argc != 2) {
+    fprintf(stderr, "Usage: %s <v1|v2|v3>\n", argv[0]);
+    return 1;
+  }
 
-  if (!mysub.init()) {
+  std::string type = argv[1];
+
+  std::unique_ptr<SubBase> mysub;
+  if (type == "v1") {
+    mysub = std::make_unique<HelloWorldSubscriber<HelloWorld_v1, HelloWorld_v1PubSubType>>();
+  } else if (type == "v2") {
+    mysub = std::make_unique<HelloWorldSubscriber<HelloWorld_v2, HelloWorld_v2PubSubType>>();
+  } else if (type == "v3") {
+    mysub = std::make_unique<HelloWorldSubscriber<HelloWorld_v3, HelloWorld_v3PubSubType>>();
+  } else {
+    fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
+    return 2;
+  }
+
+  if (!mysub->init()) {
     fprintf(stderr, "Failed to initialize subscriber\n");
     return 1;
   }
 
-  mysub.run(10);
+  mysub->run(10);
 
   return 0;
 }
