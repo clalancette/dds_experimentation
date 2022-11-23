@@ -1,4 +1,6 @@
-#include <dds/dds.hpp>
+#include <iostream>
+
+#include <ndds/ndds_cpp.h>
 
 #include "HelloWorld_v1.h"
 #include "HelloWorld_v1Support.h"

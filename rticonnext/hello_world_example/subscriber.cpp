@@ -1,12 +1,23 @@
-#include <dds/dds.hpp>
+#include <signal.h>
+
+#include <iostream>
+
+#include <ndds/ndds_cpp.h>
 
 #include "HelloWorld_v1.h"
 #include "HelloWorld_v1Support.h"
 
-static int running = 1;
+static volatile int running = 1;
+
+static void sigint_handler(int signal)
+{
+  running = 0;
+}
 
 int main(int argc, char ** argv)
 {
+  signal(SIGINT, sigint_handler);
+
   // A DomainParticipant allows an application to begin communicating in
   // a DDS domain. Typically there is one DomainParticipant per application.
   // DomainParticipant QoS is configured in USER_QOS_PROFILES.xml
@@ -73,8 +84,9 @@ int main(int argc, char ** argv)
 
   // Create the WaitSet and attach the Status Condition to it. The WaitSet
   // will be woken when the condition is triggered.
-  DDSWaitSet waitset;
-  retcode = waitset.attach_condition(status_condition);
+  // This needs to be allocated so we can destroy it before finalizing in main
+  DDSWaitSet * waitset = new DDSWaitSet;
+  retcode = waitset->attach_condition(status_condition);
   if (retcode != DDS_RETCODE_OK) {
     DDSDomainParticipantFactory::get_instance()->delete_participant(participant);
     fprintf(stderr, "Failed to attach condition to waitset\n");
@@ -96,7 +108,7 @@ int main(int argc, char ** argv)
     // wait() blocks execution of the thread until one or more attached
     // Conditions become true, or until a user-specified timeout expires.
     DDS_Duration_t wait_timeout = { 0, 100 * 1000 * 1000 };
-    retcode = waitset.wait(active_conditions_seq, wait_timeout);
+    retcode = waitset->wait(active_conditions_seq, wait_timeout);
 
     // You get a timeout if no conditions were triggered before the timeout
     if (retcode == DDS_RETCODE_TIMEOUT) {
@@ -112,6 +124,7 @@ int main(int argc, char ** argv)
 
     // If the status is "Data Available"
     if (triggeredmask & DDS_DATA_AVAILABLE_STATUS) {
+      fprintf(stderr, "Data available\n");
       HelloWorld_v1Seq data_seq;
       DDS_SampleInfoSeq info_seq;
 
@@ -121,19 +134,20 @@ int main(int argc, char ** argv)
         continue;
       }
 
-      for (DDS_Long i = 0; i < HelloWorld_v1Seq_get_length(&data_seq); ++i) {
-#if 0
+      for (int i = 0; i < data_seq.length(); ++i) {
         if (!info_seq[i].valid_data) {
           fprintf(stderr, "Received instance state notification\n");
           continue;
         }
 
         HelloWorld_v1TypeSupport::print_data(&data_seq[i]);
-#endif
       }
+
       hello_world_reader->return_loan(data_seq, info_seq);
     }
   }
+
+  delete waitset;
 
   retcode = participant->delete_contained_entities();
   DDSDomainParticipantFactory::get_instance()->delete_participant(participant);
