@@ -9,6 +9,9 @@
 #include "HelloWorld_v2.h"
 #include "HelloWorld_v2Support.h"
 
+#include "HelloWorld_v3.h"
+#include "HelloWorld_v3Support.h"
+
 class PubBase
 {
 public:
@@ -140,6 +143,8 @@ int main(int argc, char ** argv)
       mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v1, HelloWorld_v1TypeSupport, HelloWorld_v1DataWriter>>();
     } else if (user_type == "v2") {
       mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v2, HelloWorld_v2TypeSupport, HelloWorld_v2DataWriter>>();
+    } else if (user_type == "v3") {
+      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v3, HelloWorld_v3TypeSupport, HelloWorld_v3DataWriter>>();
     } else {
       fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
       return 2;

@@ -305,10 +305,17 @@ add_custom_command(
   OUTPUT HelloWorld_v2.cxx HelloWorld_v2Plugin.h HelloWorld_v2Support.h HelloWorld_v2.h HelloWorld_v2Plugin.cxx HelloWorld_v2Support.cxx
 )
 
-add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx HelloWorld_v2.cxx HelloWorld_v2Support.cxx HelloWorld_v2Plugin.cxx)
+add_custom_command(
+  # We need to add -ppDisable to work around an incompatibility of rtiddsgen
+  # and gcc >= 11.  See https://community.rti.com/forum-topic/after-upgrade-fedora-linux-34-rtiddsgen-no-longer-works
+  COMMAND $ENV{NDDSHOME}/bin/rtiddsgen -ppDisable -replace -d ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_v3.idl
+  OUTPUT HelloWorld_v3.cxx HelloWorld_v3Plugin.h HelloWorld_v3Support.h HelloWorld_v3.h HelloWorld_v3Plugin.cxx HelloWorld_v3Support.cxx
+)
+
+add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx HelloWorld_v2.cxx HelloWorld_v2Support.cxx HelloWorld_v2Plugin.cxx HelloWorld_v3.cxx HelloWorld_v3Support.cxx HelloWorld_v3Plugin.cxx)
 target_include_directories(HelloworldPublisher PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldPublisher RTIConnextDDS::cpp_api)
 
-add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx HelloWorld_v2.cxx HelloWorld_v2Support.cxx HelloWorld_v2Plugin.cxx)
+add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx HelloWorld_v2.cxx HelloWorld_v2Support.cxx HelloWorld_v2Plugin.cxx HelloWorld_v3.cxx HelloWorld_v3Support.cxx HelloWorld_v3Plugin.cxx)
 target_include_directories(HelloworldSubscriber PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldSubscriber RTIConnextDDS::cpp_api)
