@@ -18,6 +18,10 @@ public:
   virtual bool init() = 0;
 
   virtual void run(uint32_t samples, uint32_t sleep_ms) = 0;
+
+  virtual ~PubBase()
+  {
+  }
 };
 
 template<typename T, typename TS, typename DW>
