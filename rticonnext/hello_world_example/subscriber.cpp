@@ -21,6 +21,15 @@ static void sigint_handler(int signal)
   running = 0;
 }
 
+class SubscriberListener final : public DDSSubscriberListener
+{
+public:
+  void on_subscription_matched(DDSDataReader * reader, const DDS_SubscriptionMatchedStatus & status) override
+  {
+    printf("SubscriberListener: on_subscription_matched()\n");
+  }
+};
+
 class SubBase
 {
 public:
@@ -72,10 +81,12 @@ public:
       return false;
     }
 
+    subscriber_listener_ = new SubscriberListener;
+
     // This DataReader will read data of type HelloWorld on Topic
     // "HelloWorld Topic". DataReader QoS is configured in
     // USER_QOS_PROFILES.xml
-    reader_ = subscriber_->create_datareader(topic_, DDS_DATAREADER_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_NONE);
+    reader_ = subscriber_->create_datareader(topic_, DDS_DATAREADER_QOS_DEFAULT, subscriber_listener_, DDS_STATUS_MASK_ALL);
     if (reader_ == nullptr) {
       fprintf(stderr, "Failed to create datareader\n");
       return false;
@@ -121,6 +132,8 @@ public:
   ~HelloWorldSubscriber()
   {
     delete waitset_;
+
+    delete subscriber_listener_;
 
     if (participant_ != nullptr) {
       DDS_ReturnCode_t retcode = participant_->delete_contained_entities();
@@ -184,6 +197,7 @@ private:
   DDSTopic * topic_{nullptr};
   DDSDataReader * reader_{nullptr};
   DDSWaitSet * waitset_{nullptr};
+  SubscriberListener * subscriber_listener_{nullptr};
   DR * hello_world_reader_{nullptr};
 };
 

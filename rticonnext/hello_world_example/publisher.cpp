@@ -12,6 +12,25 @@
 #include "HelloWorld_v3.h"
 #include "HelloWorld_v3Support.h"
 
+class DataWriterListener final : public DDSDataWriterListener
+{
+public:
+  void on_publication_matched(DDSDataWriter * writer, const DDS_PublicationMatchedStatus & status) override
+  {
+    fprintf(stderr, "Matched\n");
+    if (status.current_count_change == 1) {
+      matched_ = status.total_count;
+      first_connected_ = true;
+    } else if (status.current_count_change == -1) {
+      matched_ = status.total_count;
+    }
+  }
+
+  int matched_{0};
+
+  bool first_connected_{false};
+};
+
 class PubBase
 {
 public:
@@ -63,9 +82,11 @@ public:
       return false;
     }
 
+    writer_listener_ = new DataWriterListener;
+
     // This DataWriter will write data on Topic "HelloWorld Topic"
     // DataWriter QoS is configured in USER_QOS_PROFILES.xml
-    writer_ = publisher_->create_datawriter(topic_, DDS_DATAWRITER_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_NONE);
+    writer_ = publisher_->create_datawriter(topic_, DDS_DATAWRITER_QOS_DEFAULT, writer_listener_, DDS_STATUS_MASK_ALL);
     if (writer_ == nullptr) {
       fprintf(stderr, "Failed to create writer\n");
       return false;
@@ -93,22 +114,28 @@ public:
       return;
     }
 
-    for (unsigned long count = 0; count < samples; ++count) {
-      sample->index = count;
-      if constexpr(isV3) {
+    unsigned long count = 0;
+    while (count < samples) {
+      if (writer_listener_->first_connected_ && writer_listener_->matched_ > 0) {
+        sample->index = count;
+        if constexpr(isV3) {
 #if defined(V3T1) || defined(V3T2)
-        strcpy(sample->message, "Hello World");
+          strcpy(sample->message, "Hello World");
 #elif defined(V3T3)
-        sample->message = 54.34;
+          sample->message = 54.34;
 #endif
-      } else {
-        strcpy(sample->message, "Hello World");
-      }
+        } else {
+          strcpy(sample->message, "Hello World");
+        }
 
-      std::cout << "Writing HelloWorld, count " << count << std::endl;
-      retcode = hello_world_writer_->write(*sample, DDS_HANDLE_NIL);
-      if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "write error " << retcode << std::endl;
+        std::cout << "Writing HelloWorld, count " << count << std::endl;
+        retcode = hello_world_writer_->write(*sample, DDS_HANDLE_NIL);
+        if (retcode != DDS_RETCODE_OK) {
+          std::cerr << "write error " << retcode << std::endl;
+        }
+
+        // We only increment the count if we successfully connected
+        ++count;
       }
 
       DDS_Duration_t send_period = { 0, sleep_ms * 1000 * 1000 };
@@ -124,6 +151,8 @@ public:
 
   ~HelloWorldPublisher()
   {
+    delete writer_listener_;
+
     if (participant_ != nullptr) {
       DDS_ReturnCode_t retcode = participant_->delete_contained_entities();
       (void)retcode;
@@ -136,6 +165,7 @@ private:
   DDSPublisher * publisher_{nullptr};
   DDSTopic * topic_{nullptr};
   DDSDataWriter * writer_{nullptr};
+  DataWriterListener * writer_listener_{nullptr};
   DW * hello_world_writer_{nullptr};
 };
 
@@ -184,6 +214,8 @@ int main(int argc, char ** argv)
       fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
       return 2;
     }
+
+    fflush(stdout);
 
     if (!mypub->init()) {
       fprintf(stderr, "Failed to initialize publisher\n");
