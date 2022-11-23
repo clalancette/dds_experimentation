@@ -42,6 +42,15 @@ public:
   }
 };
 
+class ReaderListener final : public DDSDataReaderListener
+{
+public:
+  void on_data_available(DDSDataReader * reader) override
+  {
+    printf("Data available\n");
+  }
+};
+
 template<typename TSEQ, typename TS, typename DR>
 class HelloWorldSubscriber final : public SubBase
 {
@@ -57,9 +66,11 @@ public:
       return false;
     }
 
+    subscriber_listener_ = new SubscriberListener;
+
     // A Subscriber allows an application to create one or more DataReaders
     // Subscriber QoS is configured in USER_QOS_PROFILES.xml
-    subscriber_ = participant_->create_subscriber(DDS_SUBSCRIBER_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_NONE);
+    subscriber_ = participant_->create_subscriber(DDS_SUBSCRIBER_QOS_DEFAULT, subscriber_listener_, DDS_STATUS_MASK_ALL);
     if (subscriber_ == NULL) {
       fprintf(stderr, "Failed to create subscriber\n");
       return false;
@@ -75,18 +86,18 @@ public:
 
     // A Topic has a name and a datatype. Create a Topic called
     // "HelloWorld Topic" with your registered data type
-    topic_ = participant_->create_topic("hello_world_topic", type_name, DDS_TOPIC_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_NONE);
+    topic_ = participant_->create_topic("hello_world_topic", type_name, DDS_TOPIC_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_ALL);
     if (topic_ == nullptr) {
       fprintf(stderr, "Failed to create topic\n");
       return false;
     }
 
-    subscriber_listener_ = new SubscriberListener;
+    reader_listener_ = new ReaderListener;
 
     // This DataReader will read data of type HelloWorld on Topic
     // "HelloWorld Topic". DataReader QoS is configured in
     // USER_QOS_PROFILES.xml
-    reader_ = subscriber_->create_datareader(topic_, DDS_DATAREADER_QOS_DEFAULT, subscriber_listener_, DDS_STATUS_MASK_ALL);
+    reader_ = subscriber_->create_datareader(topic_, DDS_DATAREADER_QOS_DEFAULT, reader_listener_, DDS_STATUS_MASK_ALL);
     if (reader_ == nullptr) {
       fprintf(stderr, "Failed to create datareader\n");
       return false;
@@ -134,6 +145,8 @@ public:
     delete waitset_;
 
     delete subscriber_listener_;
+
+    delete reader_listener_;
 
     if (participant_ != nullptr) {
       DDS_ReturnCode_t retcode = participant_->delete_contained_entities();
@@ -198,6 +211,7 @@ private:
   DDSDataReader * reader_{nullptr};
   DDSWaitSet * waitset_{nullptr};
   SubscriberListener * subscriber_listener_{nullptr};
+  ReaderListener * reader_listener_{nullptr};
   DR * hello_world_reader_{nullptr};
 };
 
