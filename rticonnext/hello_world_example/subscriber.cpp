@@ -48,6 +48,15 @@ public:
   }
 };
 
+class TopicListener final : public DDSTopicListener
+{
+public:
+  void on_inconsistent_topic(DDSTopic * topic, const DDS_InconsistentTopicStatus & status) override
+  {
+    printf("TopicListener: on_inconsistent_topic\n");
+  }
+};
+
 class SubBase
 {
 public:
@@ -95,9 +104,11 @@ public:
       return false;
     }
 
+    topic_listener_ = new TopicListener;
+
     // A Topic has a name and a datatype. Create a Topic called
     // "HelloWorld Topic" with your registered data type
-    topic_ = participant_->create_topic("hello_world_topic", type_name, DDS_TOPIC_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_NONE);
+    topic_ = participant_->create_topic("hello_world_topic", type_name, DDS_TOPIC_QOS_DEFAULT, topic_listener_, DDS_STATUS_MASK_ALL);
     if (topic_ == nullptr) {
       fprintf(stderr, "Failed to create topic\n");
       return false;
@@ -160,6 +171,8 @@ public:
     delete reader_listener_;
 
     delete participant_listener_;
+
+    delete topic_listener_;
 
     if (participant_ != nullptr) {
       DDS_ReturnCode_t retcode = participant_->delete_contained_entities();
@@ -226,6 +239,7 @@ private:
   SubscriberListener * subscriber_listener_{nullptr};
   ReaderListener * reader_listener_{nullptr};
   ParticipantListener * participant_listener_{nullptr};
+  TopicListener * topic_listener_{nullptr};
   DR * hello_world_reader_{nullptr};
 };
 
