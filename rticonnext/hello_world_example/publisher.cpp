@@ -78,7 +78,7 @@ int main(int argc, char ** argv)
     }
 
     // Send every 4 seconds
-    DDS_Duration_t send_period = { 0, 100 };
+    DDS_Duration_t send_period = { 0, 100 * 1000 * 1000 };
     NDDSUtility::sleep(send_period);
   }
 

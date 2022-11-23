@@ -309,6 +309,6 @@ add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1.cxx HelloWorld_v1
 target_include_directories(HelloworldPublisher PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldPublisher RTIConnextDDS::cpp_api)
 
-add_executable(HelloworldSubscriber subscriber.cpp)
-target_include_directories(HelloworldPublisher PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx)
+target_include_directories(HelloworldSubscriber PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldSubscriber RTIConnextDDS::cpp_api)
