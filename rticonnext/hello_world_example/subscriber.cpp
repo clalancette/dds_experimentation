@@ -21,12 +21,30 @@ static void sigint_handler(int signal)
   running = 0;
 }
 
+class ParticipantListener final : public DDSDomainParticipantListener
+{
+public:
+  void on_inconsistent_topic(DDSTopic * topic, const DDS_InconsistentTopicStatus & status) override
+  {
+    printf("ParticipantListener: on_inconsistent_topic\n");
+  }
+};
+
 class SubscriberListener final : public DDSSubscriberListener
 {
 public:
   void on_subscription_matched(DDSDataReader * reader, const DDS_SubscriptionMatchedStatus & status) override
   {
     printf("SubscriberListener: on_subscription_matched()\n");
+  }
+};
+
+class ReaderListener final : public DDSDataReaderListener
+{
+public:
+  void on_data_available(DDSDataReader * reader) override
+  {
+    printf("ReaderListener: Data available\n");
   }
 };
 
@@ -42,25 +60,18 @@ public:
   }
 };
 
-class ReaderListener final : public DDSDataReaderListener
-{
-public:
-  void on_data_available(DDSDataReader * reader) override
-  {
-    printf("Data available\n");
-  }
-};
-
 template<typename TSEQ, typename TS, typename DR>
 class HelloWorldSubscriber final : public SubBase
 {
 public:
   bool init() override
   {
+    participant_listener_ = new ParticipantListener;
+
     // A DomainParticipant allows an application to begin communicating in
     // a DDS domain. Typically there is one DomainParticipant per application.
     // DomainParticipant QoS is configured in USER_QOS_PROFILES.xml
-    participant_ = DDSDomainParticipantFactory::get_instance()->create_participant(0, DDS_PARTICIPANT_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_NONE);
+    participant_ = DDSDomainParticipantFactory::get_instance()->create_participant(0, DDS_PARTICIPANT_QOS_DEFAULT, participant_listener_, DDS_STATUS_MASK_ALL);
     if (participant_ == nullptr) {
       fprintf(stderr, "Failed to create participant\n");
       return false;
@@ -86,7 +97,7 @@ public:
 
     // A Topic has a name and a datatype. Create a Topic called
     // "HelloWorld Topic" with your registered data type
-    topic_ = participant_->create_topic("hello_world_topic", type_name, DDS_TOPIC_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_ALL);
+    topic_ = participant_->create_topic("hello_world_topic", type_name, DDS_TOPIC_QOS_DEFAULT, nullptr, DDS_STATUS_MASK_NONE);
     if (topic_ == nullptr) {
       fprintf(stderr, "Failed to create topic\n");
       return false;
@@ -147,6 +158,8 @@ public:
     delete subscriber_listener_;
 
     delete reader_listener_;
+
+    delete participant_listener_;
 
     if (participant_ != nullptr) {
       DDS_ReturnCode_t retcode = participant_->delete_contained_entities();
@@ -212,6 +225,7 @@ private:
   DDSWaitSet * waitset_{nullptr};
   SubscriberListener * subscriber_listener_{nullptr};
   ReaderListener * reader_listener_{nullptr};
+  ParticipantListener * participant_listener_{nullptr};
   DR * hello_world_reader_{nullptr};
 };
 

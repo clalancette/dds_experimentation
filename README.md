@@ -169,7 +169,7 @@ struct HelloWorld_v3
 | `V1T1` with `V2T4` | &cross; | &cross; | &check; |
 | **Extensibility with mismatch type name** `HelloWorld_v2.idl` with `HelloWorld_v3.idl` |||
 | `V2T4` with `V3T1` | &cross; | &check; | &check; |
-| `V2T4` with `V3T2` | &cross; | &cross; | &check; |
+| `V2T4` with `V3T2` | &cross; | &cross; | &cross; |
 | `V2T4` with `V3T3` | &cross; | &cross; | &cross; |
 
 * -`fastdds` is tested with `fastdds/HelloWorldExample/`
