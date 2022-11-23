@@ -42,6 +42,7 @@ public:
 class ReaderListener final : public DDSDataReaderListener
 {
 public:
+  // This doesn't actually seem to be firing
   void on_data_available(DDSDataReader * reader) override
   {
     printf("ReaderListener: Data available\n");
@@ -51,6 +52,7 @@ public:
 class TopicListener final : public DDSTopicListener
 {
 public:
+  // When there is both a participant listener and a topic listener on_inconsistent_topic callback registered, only the Topic one gets called
   void on_inconsistent_topic(DDSTopic * topic, const DDS_InconsistentTopicStatus & status) override
   {
     printf("TopicListener: on_inconsistent_topic\n");
