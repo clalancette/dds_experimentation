@@ -12,8 +12,7 @@
 
 // Hello world!
 struct HelloWorld_v1 {
-    // String with maximum length of 256 characters
-  short index;
+  unsigned long index;
   string message;
 };
 
