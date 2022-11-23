@@ -17,6 +17,7 @@ public:
   virtual void run(uint32_t samples, uint32_t sleep_ms) = 0;
 };
 
+template<typename T, typename TS, typename DW>
 class HelloWorldPublisher final : public PubBase
 {
 public:
@@ -40,8 +41,8 @@ public:
     }
 
     // Register the datatype to use when creating the Topic
-    const char * type_name = HelloWorld_v1TypeSupport::get_type_name();
-    DDS_ReturnCode_t retcode = HelloWorld_v1TypeSupport::register_type(participant_, type_name);
+    const char * type_name = TS::get_type_name();
+    DDS_ReturnCode_t retcode = TS::register_type(participant_, type_name);
     if (retcode != DDS_RETCODE_OK) {
       fprintf(stderr, "Failed to register type\n");
       return false;
@@ -65,7 +66,7 @@ public:
 
     // A narrow is a cast from a generic DataWriter to one that is specific
     // to your type. Use the type specific DataWriter to write()
-    hello_world_writer_ = HelloWorld_v1DataWriter::narrow(writer_);
+    hello_world_writer_ = DW::narrow(writer_);
     if (hello_world_writer_ == nullptr) {
       fprintf(stderr, "Failed to narrow writer\n");
       return false;
@@ -79,7 +80,7 @@ public:
     DDS_ReturnCode_t retcode;
 
     // Create data sample for writing
-    HelloWorld_v1 * sample = HelloWorld_v1TypeSupport::create_data();
+    T * sample = TS::create_data();
     if (sample == nullptr) {
       fprintf(stderr, "Failed to create sample data\n");
       return;
@@ -99,7 +100,7 @@ public:
       NDDSUtility::sleep(send_period);
     }
 
-    retcode = HelloWorld_v1TypeSupport::delete_data(sample);
+    retcode = TS::delete_data(sample);
     if (retcode != DDS_RETCODE_OK) {
       std::cerr << "HelloWorldTypeSupport::delete_data error " << retcode
                 << std::endl;
@@ -120,7 +121,7 @@ private:
   DDSPublisher * publisher_{nullptr};
   DDSTopic * topic_{nullptr};
   DDSDataWriter * writer_{nullptr};
-  HelloWorld_v1DataWriter * hello_world_writer_{nullptr};
+  DW * hello_world_writer_{nullptr};
 };
 
 int main(int argc, char ** argv)
@@ -136,7 +137,9 @@ int main(int argc, char ** argv)
     std::unique_ptr<PubBase> mypub;
 
     if (user_type == "v1") {
-      mypub = std::make_unique<HelloWorldPublisher>();
+      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v1, HelloWorld_v1TypeSupport, HelloWorld_v1DataWriter>>();
+    } else if (user_type == "v2") {
+      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v2, HelloWorld_v2TypeSupport, HelloWorld_v2DataWriter>>();
     } else {
       fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
       return 2;
