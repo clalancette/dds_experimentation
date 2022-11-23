@@ -1,0 +1,5 @@
+struct HelloWorld_v1
+{
+  unsigned long index;
+  string message;
+};

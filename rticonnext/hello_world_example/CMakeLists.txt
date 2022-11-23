@@ -291,31 +291,69 @@ rti_init_env()
 
 rti_find_connextpro()
 
+option(V1TYPE "The type of V1 message to use, options are T1, T2, or T3")
+option(V2TYPE "The type of V2 message to use, options are T1, T2, T3, or T4")
+option(V3TYPE "The type of V3 message to use, options are T1, T2, or T3")
+
+if("${V1TYPE}" STREQUAL "T1")
+  configure_file("HelloWorld_v1t1.idl" "HelloWorld_v1.idl")
+elseif("${V1TYPE}" STREQUAL "T2")
+  configure_file("HelloWorld_v1t2.idl" "HelloWorld_v1.idl")
+elseif("${V1TYPE}" STREQUAL "T3")
+  configure_file("HelloWorld_v1t3.idl" "HelloWorld_v1.idl")
+else()
+  message(FATAL_ERROR "V1TYPE must be specified as T1, T2, or T3")
+endif()
+
+if("${V2TYPE}" STREQUAL "T1")
+  configure_file("HelloWorld_v2t1.idl" "HelloWorld_v2.idl")
+elseif("${V2TYPE}" STREQUAL "T2")
+  configure_file("HelloWorld_v2t2.idl" "HelloWorld_v2.idl")
+elseif("${V2TYPE}" STREQUAL "T3")
+  configure_file("HelloWorld_v2t3.idl" "HelloWorld_v2.idl")
+elseif("${V2TYPE}" STREQUAL "T4")
+  configure_file("HelloWorld_v2t4.idl" "HelloWorld_v2.idl")
+else()
+  message(FATAL_ERROR "V2TYPE must be specified as T1, T2, T3, or T4")
+endif()
+
+if("${V3TYPE}" STREQUAL "T1")
+  configure_file("HelloWorld_v3t1.idl" "HelloWorld_v3.idl")
+elseif("${V3TYPE}" STREQUAL "T2")
+  configure_file("HelloWorld_v3t2.idl" "HelloWorld_v3.idl")
+elseif("${V3TYPE}" STREQUAL "T3")
+  configure_file("HelloWorld_v3t3.idl" "HelloWorld_v3.idl")
+else()
+  message(FATAL_ERROR "V3TYPE must be specified as T1, T2, or T3")
+endif()
+
 add_custom_command(
   # We need to add -ppDisable to work around an incompatibility of rtiddsgen
   # and gcc >= 11.  See https://community.rti.com/forum-topic/after-upgrade-fedora-linux-34-rtiddsgen-no-longer-works
-  COMMAND $ENV{NDDSHOME}/bin/rtiddsgen -ppDisable -replace -d ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_v1.idl
+  COMMAND $ENV{NDDSHOME}/bin/rtiddsgen -ppDisable -replace -d ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HelloWorld_v1.idl
   OUTPUT HelloWorld_v1.cxx HelloWorld_v1Plugin.h HelloWorld_v1Support.h HelloWorld_v1.h HelloWorld_v1Plugin.cxx HelloWorld_v1Support.cxx
 )
 
 add_custom_command(
   # We need to add -ppDisable to work around an incompatibility of rtiddsgen
   # and gcc >= 11.  See https://community.rti.com/forum-topic/after-upgrade-fedora-linux-34-rtiddsgen-no-longer-works
-  COMMAND $ENV{NDDSHOME}/bin/rtiddsgen -ppDisable -replace -d ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_v2.idl
+  COMMAND $ENV{NDDSHOME}/bin/rtiddsgen -ppDisable -replace -d ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HelloWorld_v2.idl
   OUTPUT HelloWorld_v2.cxx HelloWorld_v2Plugin.h HelloWorld_v2Support.h HelloWorld_v2.h HelloWorld_v2Plugin.cxx HelloWorld_v2Support.cxx
 )
 
 add_custom_command(
   # We need to add -ppDisable to work around an incompatibility of rtiddsgen
   # and gcc >= 11.  See https://community.rti.com/forum-topic/after-upgrade-fedora-linux-34-rtiddsgen-no-longer-works
-  COMMAND $ENV{NDDSHOME}/bin/rtiddsgen -ppDisable -replace -d ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_v3.idl
+  COMMAND $ENV{NDDSHOME}/bin/rtiddsgen -ppDisable -replace -d ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/HelloWorld_v3.idl
   OUTPUT HelloWorld_v3.cxx HelloWorld_v3Plugin.h HelloWorld_v3Support.h HelloWorld_v3.h HelloWorld_v3Plugin.cxx HelloWorld_v3Support.cxx
 )
 
 add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx HelloWorld_v2.cxx HelloWorld_v2Support.cxx HelloWorld_v2Plugin.cxx HelloWorld_v3.cxx HelloWorld_v3Support.cxx HelloWorld_v3Plugin.cxx)
 target_include_directories(HelloworldPublisher PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_compile_definitions(HelloworldPublisher PRIVATE "V1${V1TYPE}" "V2${V2TYPE}" "V3${V3TYPE}")
 target_link_libraries(HelloworldPublisher RTIConnextDDS::cpp_api)
 
 add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx HelloWorld_v2.cxx HelloWorld_v2Support.cxx HelloWorld_v2Plugin.cxx HelloWorld_v3.cxx HelloWorld_v3Support.cxx HelloWorld_v3Plugin.cxx)
 target_include_directories(HelloworldSubscriber PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_compile_definitions(HelloworldSubscriber PRIVATE "V1${V1TYPE}" "V2${V2TYPE}" "V3${V3TYPE}")
 target_link_libraries(HelloworldSubscriber RTIConnextDDS::cpp_api)

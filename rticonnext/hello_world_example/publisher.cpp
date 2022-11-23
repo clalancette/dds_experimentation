@@ -24,7 +24,7 @@ public:
   }
 };
 
-template<typename T, typename TS, typename DW>
+template<typename T, typename TS, typename DW, bool isV3>
 class HelloWorldPublisher final : public PubBase
 {
 public:
@@ -95,7 +95,15 @@ public:
 
     for (unsigned long count = 0; count < samples; ++count) {
       sample->index = count;
-      strcpy(sample->message, "Hello World");
+      if constexpr(isV3) {
+#if defined(V3T1) || defined(V3T2)
+        strcpy(sample->message, "Hello World");
+#elif defined(V3T3)
+        sample->message = 54.34;
+#endif
+      } else {
+        strcpy(sample->message, "Hello World");
+      }
 
       std::cout << "Writing HelloWorld, count " << count << std::endl;
       retcode = hello_world_writer_->write(*sample, DDS_HANDLE_NIL);
@@ -144,11 +152,34 @@ int main(int argc, char ** argv)
     std::unique_ptr<PubBase> mypub;
 
     if (user_type == "v1") {
-      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v1, HelloWorld_v1TypeSupport, HelloWorld_v1DataWriter>>();
+      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v1, HelloWorld_v1TypeSupport, HelloWorld_v1DataWriter, false>>();
+#if defined(V1T1)
+    printf("Publishing type V1T1\n");
+#elif defined(V1T2)
+    printf("Publishing type V1T2\n");
+#elif defined(V1T3)
+    printf("Publishing type V1T3\n");
+#endif
     } else if (user_type == "v2") {
-      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v2, HelloWorld_v2TypeSupport, HelloWorld_v2DataWriter>>();
+      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v2, HelloWorld_v2TypeSupport, HelloWorld_v2DataWriter, false>>();
+#if defined(V2T1)
+    printf("Publishing type V2T1\n");
+#elif defined(V2T2)
+    printf("Publishing type V2T2\n");
+#elif defined(V2T3)
+    printf("Publishing type V2T3\n");
+#elif defined(V2T4)
+    printf("Publishing type V2T4\n");
+#endif
     } else if (user_type == "v3") {
-      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v3, HelloWorld_v3TypeSupport, HelloWorld_v3DataWriter>>();
+      mypub = std::make_unique<HelloWorldPublisher<HelloWorld_v3, HelloWorld_v3TypeSupport, HelloWorld_v3DataWriter, true>>();
+#if defined(V3T1)
+    printf("Publishing type V3T1\n");
+#elif defined(V3T2)
+    printf("Publishing type V3T2\n");
+#elif defined(V3T3)
+    printf("Publishing type V3T2\n");
+#endif
     } else {
       fprintf(stderr, "Invalid argument; must be one of v1, v2, v3\n");
       return 2;
