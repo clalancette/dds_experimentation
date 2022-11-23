@@ -7,6 +7,9 @@
 #include "HelloWorld_v1.h"
 #include "HelloWorld_v1Support.h"
 
+#include "HelloWorld_v2.h"
+#include "HelloWorld_v2Support.h"
+
 static volatile int running = 1;
 
 static void sigint_handler(int signal)

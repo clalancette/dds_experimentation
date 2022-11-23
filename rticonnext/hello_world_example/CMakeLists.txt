@@ -305,10 +305,10 @@ add_custom_command(
   OUTPUT HelloWorld_v2.cxx HelloWorld_v2Plugin.h HelloWorld_v2Support.h HelloWorld_v2.h HelloWorld_v2Plugin.cxx HelloWorld_v2Support.cxx
 )
 
-add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx)
+add_executable(HelloworldPublisher publisher.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx HelloWorld_v2.cxx HelloWorld_v2Support.cxx HelloWorld_v2Plugin.cxx)
 target_include_directories(HelloworldPublisher PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldPublisher RTIConnextDDS::cpp_api)
 
-add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx)
+add_executable(HelloworldSubscriber subscriber.cpp HelloWorld_v1.cxx HelloWorld_v1Support.cxx HelloWorld_v1Plugin.cxx HelloWorld_v2.cxx HelloWorld_v2Support.cxx HelloWorld_v2Plugin.cxx)
 target_include_directories(HelloworldSubscriber PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(HelloworldSubscriber RTIConnextDDS::cpp_api)
