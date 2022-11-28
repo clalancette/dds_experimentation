@@ -24,28 +24,303 @@ static void sigint_handler(int signal)
 class ParticipantListener final : public DDSDomainParticipantListener
 {
 public:
+  // override on DDSTopicListener
   void on_inconsistent_topic(DDSTopic * topic, const DDS_InconsistentTopicStatus & status) override
   {
-    printf("ParticipantListener: on_inconsistent_topic\n");
+    fprintf(stderr, "ParticipantListener: on_inconsistent_topic\n");
+  }
+
+  // override on DDSSubscriberListener
+  void on_data_on_readers(DDSSubscriber * sub) override
+  {
+    (void)sub;
+    fprintf(stderr, "ParticipantListener: on_data_on_readers\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_offered_deadline_missed(DDSDataWriter * writer, const DDS_OfferedDeadlineMissedStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_offered_deadline_missed\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_liveliness_lost(DDSDataWriter * writer, const DDS_LivelinessLostStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_liveliness_lost\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_offered_incompatible_qos(DDSDataWriter * writer, const DDS_OfferedIncompatibleQosStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_offered_incompatible_qos\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_publication_matched(DDSDataWriter * writer, const DDS_PublicationMatchedStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_publication_matched\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_reliable_writer_cache_changed(DDSDataWriter * writer, const DDS_ReliableWriterCacheChangedStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_reliable_writer_cache_changed\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_reliable_reader_activity_changed(DDSDataWriter * writer, const DDS_ReliableReaderActivityChangedStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_reliable_reader_activity_changed\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_destination_unreachable(DDSDataWriter * writer, const DDS_InstanceHandle_t & handle, const DDS_Locator_t & destination) override
+  {
+    (void)writer;
+    (void)handle;
+    (void)destination;
+    fprintf(stderr, "ParticipantListener: on_destination_unreachable\n");
+  }
+
+  // override from DDSDataWriterListener
+  void * on_data_request(DDSDataWriter * writer, const DDS_Cookie_t & cookie) override
+  {
+    (void)writer;
+    (void)cookie;
+    fprintf(stderr, "ParticipantListener: on_data_request\n");
+    return nullptr;
+  }
+
+  // override from DDSDataWriterListener
+  void on_data_return(DDSDataWriter * writer, void * instance_data, const DDS_Cookie_t & cookie) override
+  {
+    (void)writer;
+    (void)cookie;
+    fprintf(stderr, "ParticipantListener: on_data_return\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_sample_removed(DDSDataWriter * writer, const DDS_Cookie_t & cookie) override
+  {
+    (void)writer;
+    (void)cookie;
+    fprintf(stderr, "ParticipantListener: on_sample_removed\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_instance_replaced(DDSDataWriter * writer, const DDS_InstanceHandle_t & handle) override
+  {
+    (void)writer;
+    (void)handle;
+    fprintf(stderr, "ParticipantListener: on_instance_replaced\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_application_acknowledgment(DDSDataWriter * writer, const DDS_AcknowledgmentInfo & info) override
+  {
+    (void)writer;
+    (void)info;
+    fprintf(stderr, "ParticipantListener: on_application_acknowledgement\n");
+  }
+
+  // override from DDSDataWriterListener
+  void on_service_request_accepted(DDSDataWriter * writer, const DDS_ServiceRequestAcceptedStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_service_request_accepted\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_requested_deadline_missed(DDSDataReader * reader, const DDS_RequestedDeadlineMissedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_requested_deadline_missed\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_liveliness_changed(DDSDataReader * reader, const DDS_LivelinessChangedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_liveliness_changed\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_requested_incompatible_qos(DDSDataReader * reader, const DDS_RequestedIncompatibleQosStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_requested_incompatible_qos\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_sample_rejected(DDSDataReader * reader, const DDS_SampleRejectedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_sample_rejected\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_data_available(DDSDataReader * reader) override
+  {
+    (void)reader;
+    fprintf(stderr, "ParticipantListener: on_data_available\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_sample_lost(DDSDataReader * reader, const DDS_SampleLostStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_sample_lost\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_subscription_matched(DDSDataReader * reader, const DDS_SubscriptionMatchedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_subscription_matched\n");
   }
 };
 
 class SubscriberListener final : public DDSSubscriberListener
 {
 public:
+  // override on DDSSubscriberListener
+  void on_data_on_readers(DDSSubscriber * sub) override
+  {
+    (void)sub;
+    fprintf(stderr, "SubscriberListener: on_data_on_readers\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_requested_deadline_missed(DDSDataReader * reader, const DDS_RequestedDeadlineMissedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "SubscriberListener: on_requested_deadline_missed\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_liveliness_changed(DDSDataReader * reader, const DDS_LivelinessChangedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "SubscriberListener: on_liveliness_changed\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_requested_incompatible_qos(DDSDataReader * reader, const DDS_RequestedIncompatibleQosStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "SubscriberListener: on_requested_incompatible_qos\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_sample_rejected(DDSDataReader * reader, const DDS_SampleRejectedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "SubscriberListener: on_sample_rejected\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_data_available(DDSDataReader * reader) override
+  {
+    (void)reader;
+    fprintf(stderr, "SubscriberListener: on_data_available\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_sample_lost(DDSDataReader * reader, const DDS_SampleLostStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "SubscriberListener: on_sample_lost\n");
+  }
+
+  // override from DDSDataReaderListener
   void on_subscription_matched(DDSDataReader * reader, const DDS_SubscriptionMatchedStatus & status) override
   {
-    printf("SubscriberListener: on_subscription_matched()\n");
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "SubscriberListener: on_subscription_matched\n");
   }
 };
 
 class ReaderListener final : public DDSDataReaderListener
 {
 public:
-  // This doesn't actually seem to be firing
+  // override from DDSDataReaderListener
+  void on_requested_deadline_missed(DDSDataReader * reader, const DDS_RequestedDeadlineMissedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ReaderListener: on_requested_deadline_missed\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_liveliness_changed(DDSDataReader * reader, const DDS_LivelinessChangedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ReaderListener: on_liveliness_changed\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_requested_incompatible_qos(DDSDataReader * reader, const DDS_RequestedIncompatibleQosStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ReaderListener: on_requested_incompatible_qos\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_sample_rejected(DDSDataReader * reader, const DDS_SampleRejectedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ReaderListener: on_sample_rejected\n");
+  }
+
+  // override from DDSDataReaderListener
   void on_data_available(DDSDataReader * reader) override
   {
-    printf("ReaderListener: Data available\n");
+    (void)reader;
+    fprintf(stderr, "ReaderListener: on_data_available\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_sample_lost(DDSDataReader * reader, const DDS_SampleLostStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ReaderListener: on_sample_lost\n");
+  }
+
+  // override from DDSDataReaderListener
+  void on_subscription_matched(DDSDataReader * reader, const DDS_SubscriptionMatchedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ReaderListener: on_subscription_matched\n");
   }
 };
 
@@ -55,7 +330,7 @@ public:
   // When there is both a participant listener and a topic listener on_inconsistent_topic callback registered, only the Topic one gets called
   void on_inconsistent_topic(DDSTopic * topic, const DDS_InconsistentTopicStatus & status) override
   {
-    printf("TopicListener: on_inconsistent_topic\n");
+    fprintf(stderr, "TopicListener: on_inconsistent_topic\n");
   }
 };
 
