@@ -11,14 +11,258 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
 
 #include "HelloWorld_v1PubSubTypes.h"
 #include "HelloWorld_v2PubSubTypes.h"
 #include "HelloWorld_v3PubSubTypes.h"
+
+class MyParticipantListener final : public eprosima::fastdds::dds::DomainParticipantListener
+{
+public:
+  // override from DomainParticipantListener
+  void on_participant_discovery(
+          eprosima::fastdds::dds::DomainParticipant * participant,
+          eprosima::fastrtps::rtps::ParticipantDiscoveryInfo && info) override
+  {
+    (void)participant;
+    (void)info;
+    fprintf(stderr, "ParticipantListener: on_participant_discovery\n");
+  }
+
+  // override from DomainParticipantListener
+  void on_subscriber_discovery(
+          eprosima::fastdds::dds::DomainParticipant * participant,
+          eprosima::fastrtps::rtps::ReaderDiscoveryInfo && info) override
+  {
+    (void)participant;
+    (void)info;
+    fprintf(stderr, "ParticipantListener: on_subscriber_discovery\n");
+  }
+
+  // override from DomainParticipantListener
+  void on_publisher_discovery(
+          eprosima::fastdds::dds::DomainParticipant * participant,
+          eprosima::fastrtps::rtps::WriterDiscoveryInfo && info) override
+  {
+    (void)participant;
+    (void)info;
+    fprintf(stderr, "ParticipantListener: on_publisher_discovery\n");
+  }
+
+  // override from DomainParticipantListener
+  void on_type_discovery(
+          eprosima::fastdds::dds::DomainParticipant * participant,
+          const eprosima::fastrtps::rtps::SampleIdentity & request_sample_id,
+          const eprosima::fastrtps::string_255 & topic,
+          const eprosima::fastrtps::types::TypeIdentifier * identifier,
+          const eprosima::fastrtps::types::TypeObject * object,
+          eprosima::fastrtps::types::DynamicType_ptr dyn_type) override
+  {
+    (void)participant;
+    (void)request_sample_id;
+    (void)topic;
+    (void)identifier;
+    (void)object;
+    (void)dyn_type;
+    fprintf(stderr, "ParticipantListener: on_type_discovery\n");
+  }
+
+  // override from DomainParticipantListener
+  void on_type_dependencies_reply(
+          eprosima::fastdds::dds::DomainParticipant* participant,
+          const eprosima::fastrtps::rtps::SampleIdentity & request_sample_id,
+          const eprosima::fastrtps::types::TypeIdentifierWithSizeSeq & dependencies) override
+  {
+    (void)participant;
+    (void)request_sample_id;
+    (void)dependencies;
+    fprintf(stderr, "ParticipantListener: on_type_dependencies_reply\n");
+  }
+
+  // override from DomainParticipantListener
+  void on_type_information_received(
+          eprosima::fastdds::dds::DomainParticipant * participant,
+          const eprosima::fastrtps::string_255 topic_name,
+          const eprosima::fastrtps::string_255 type_name,
+          const eprosima::fastrtps::types::TypeInformation & type_information) override
+  {
+    (void)participant;
+    (void)topic_name;
+    (void)type_name;
+    (void)type_information;
+    fprintf(stderr, "ParticipantListener: on_type_information_received\n");
+  }
+
+  // override from PublisherListener
+  void on_publication_matched(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::PublicationMatchedStatus & info) override
+  {
+    (void)writer;
+    (void)info;
+    fprintf(stderr, "ParticipantListener: on_publication_matched\n");
+  }
+
+  // override from PublisherListener
+  void on_offered_deadline_missed(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::OfferedDeadlineMissedStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_offered_deadline_missed\n");
+  }
+
+  // override from PublisherListener
+  void on_offered_incompatible_qos(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::OfferedIncompatibleQosStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_offered_incompatible_qos\n");
+  }
+
+  // override from PublisherListener
+  void on_liveliness_lost(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::LivelinessLostStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_liveliness_lost\n");
+  }
+
+  // override from SubscriberListener
+  void on_data_on_readers(eprosima::fastdds::dds::Subscriber * sub) override
+  {
+    (void)sub;
+    fprintf(stderr, "ParticipantListener: on_data_on_readers\n");
+  }
+
+  // override from DataReaderListener
+  void on_data_available(eprosima::fastdds::dds::DataReader * reader) override
+  {
+    (void)reader;
+    fprintf(stderr, "ParticipantListener: on_data_available\n");
+  }
+
+  // override from DataReaderListener
+  void on_subscription_matched(
+          eprosima::fastdds::dds::DataReader * reader,
+          const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override
+  {
+    (void)reader;
+    (void)info;
+    fprintf(stderr, "ParticipantListener: on_subscription_matched\n");
+  }
+
+  // override from DataReaderListener
+  void on_requested_deadline_missed(
+          eprosima::fastdds::dds::DataReader * reader,
+          const eprosima::fastrtps::RequestedDeadlineMissedStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_requested_deadline_missed\n");
+  }
+
+  // override from DataReaderListener
+  void on_liveliness_changed(
+          eprosima::fastdds::dds::DataReader * reader,
+          const eprosima::fastrtps::LivelinessChangedStatus& status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_liveliness_changed\n");
+  }
+
+  // override from DataReaderListener
+  void on_sample_rejected(
+          eprosima::fastdds::dds::DataReader * reader,
+          const eprosima::fastrtps::SampleRejectedStatus& status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_sample_rejected\n");
+  }
+
+  // override from DataReaderListener
+  void on_requested_incompatible_qos(
+          eprosima::fastdds::dds::DataReader * reader,
+          const eprosima::fastdds::dds::RequestedIncompatibleQosStatus & status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_requested_incompatible_qos\n");
+  }
+
+  // override from DataReaderListener
+  void on_sample_lost(
+          eprosima::fastdds::dds::DataReader * reader,
+          const eprosima::fastdds::dds::SampleLostStatus& status) override
+  {
+    (void)reader;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_sample_lost\n");
+  }
+
+  // override from TopicListener
+  void on_inconsistent_topic(
+          eprosima::fastdds::dds::Topic * topic,
+          eprosima::fastdds::dds::InconsistentTopicStatus status)
+  {
+    (void)topic;
+    (void)status;
+    fprintf(stderr, "ParticipantListener: on_inconsistent_topic\n");
+  }
+};
+
+class MyPublisherListener final : public eprosima::fastdds::dds::PublisherListener
+{
+public:
+  void on_publication_matched(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::PublicationMatchedStatus & info) override
+  {
+    (void)writer;
+    (void)info;
+    fprintf(stderr, "PublisherListener: on_publication_matched\n");
+  }
+
+  void on_offered_deadline_missed(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::OfferedDeadlineMissedStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "PublisherListener: on_offered_deadline_missed\n");
+  }
+
+  void on_offered_incompatible_qos(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::OfferedIncompatibleQosStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "PublisherListener: on_offered_incompatible_qos\n");
+  }
+
+  void on_liveliness_lost(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::LivelinessLostStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "PublisherListener: on_liveliness_lost\n");
+  }
+};
 
 class PubBase
 {
@@ -53,7 +297,12 @@ public:
     if (topic_ != nullptr) {
       participant_->delete_topic(topic_);
     }
+
     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
+
+    delete participant_listener_;
+
+    delete pub_listener_;
   }
 
   //!Initialize
@@ -69,9 +318,12 @@ public:
     } else {
       hello_.message("Hello World");
     }
+
+    participant_listener_ = new MyParticipantListener;
+
     eprosima::fastdds::dds::DomainParticipantQos pqos;
     pqos.name("Participant_pub");
-    participant_ = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(0, pqos, participant_listener_);
     // ====================================================
 
     if (participant_ == nullptr) {
@@ -81,8 +333,10 @@ public:
     //REGISTER THE TYPE
     type_.register_type(participant_);
 
+    pub_listener_ = new MyPublisherListener;
+
     //CREATE THE PUBLISHER
-    publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT, nullptr);
+    publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT, pub_listener_);
 
     if (publisher_ == nullptr) {
       return false;
@@ -145,6 +399,10 @@ private:
   eprosima::fastdds::dds::Topic* topic_;
 
   eprosima::fastdds::dds::DataWriter* writer_;
+
+  MyParticipantListener * participant_listener_{nullptr};
+
+  MyPublisherListener * pub_listener_{nullptr};
 
   bool stop_;
 
