@@ -59,22 +59,6 @@ public:
   //!Initialize
   bool init() override
   {
-    // ====================================================
-    /// experimentation with dds user_data
-    /// https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html#userdataqospolicy
-    //The TopicDataQosPolicy is default constructed with an empty vector.
-    eprosima::fastdds::dds::UserDataQosPolicy user_data;
-    std::vector<eprosima::fastrtps::rtps::octet> vec;
-    vec = user_data.data_vec(); // Getter Function
-
-    //Add two new octets to user data vector
-    eprosima::fastrtps::rtps::octet val = 3;
-    vec.push_back(val);
-    val = 10;
-    vec.push_back(val);
-    user_data.data_vec(vec); //Setter Function
-    // ====================================================
-
     hello_.index(0);
     if constexpr(isV3) {
 #if defined(V3T1) || defined(V3T2)
@@ -87,7 +71,6 @@ public:
     }
     eprosima::fastdds::dds::DomainParticipantQos pqos;
     pqos.name("Participant_pub");
-    pqos.user_data(user_data);
     participant_ = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(0, pqos);
     // ====================================================
 
