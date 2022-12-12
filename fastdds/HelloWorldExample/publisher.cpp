@@ -264,6 +264,56 @@ public:
   }
 };
 
+class MyDataWriterListener final : public eprosima::fastdds::dds::DataWriterListener
+{
+public:
+  void on_publication_matched(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::PublicationMatchedStatus & info) override
+  {
+    (void)writer;
+    (void)info;
+    fprintf(stderr, "DataWriterListener: on_publication_matched\n");
+    if (info.current_count_change == 1) {
+      matched_ = info.total_count;
+      firstConnected_ = true;
+    } else if (info.current_count_change == -1) {
+      matched_ = info.total_count;
+    }
+  }
+
+  void on_offered_deadline_missed(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::OfferedDeadlineMissedStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "DataWriterListener: on_offered_deadline_missed\n");
+  }
+
+  void on_offered_incompatible_qos(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::OfferedIncompatibleQosStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "DataWriterListener: on_offered_incompatible_qos\n");
+  }
+
+  void on_liveliness_lost(
+          eprosima::fastdds::dds::DataWriter * writer,
+          const eprosima::fastdds::dds::LivelinessLostStatus & status) override
+  {
+    (void)writer;
+    (void)status;
+    fprintf(stderr, "DataWriterListener: on_liveliness_lost\n");
+  }
+
+  int matched_;
+
+  bool firstConnected_;
+};
+
 class PubBase
 {
 public:
@@ -303,6 +353,8 @@ public:
     delete participant_listener_;
 
     delete pub_listener_;
+
+    delete data_writer_listener_;
   }
 
   //!Initialize
@@ -351,8 +403,10 @@ public:
       return false;
     }
 
+    data_writer_listener_ = new MyDataWriterListener;
+
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_, eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT, &listener_);
+    writer_ = publisher_->create_datawriter(topic_, eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT, data_writer_listener_);
 
     if (writer_ == nullptr) {
       return false;
@@ -364,7 +418,7 @@ public:
   bool publish(bool waitForListener = true)
   {
     /// return false if no match, script will just wait for matching listener
-    if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
+    if (data_writer_listener_->firstConnected_ || !waitForListener || data_writer_listener_->matched_ > 0)
     {
       hello_.index(hello_.index() + 1);
       writer_->write(&hello_);
@@ -404,41 +458,9 @@ private:
 
   MyPublisherListener * pub_listener_{nullptr};
 
+  MyDataWriterListener * data_writer_listener_{nullptr};
+
   bool stop_;
-
-  class PubListener final : public eprosima::fastdds::dds::DataWriterListener
-  {
-  public:
-
-    PubListener() : matched_(0), firstConnected_(false)
-    {
-    }
-
-    ~PubListener() override
-    {
-    }
-
-    void on_publication_matched(
-      eprosima::fastdds::dds::DataWriter* writer,
-      const eprosima::fastdds::dds::PublicationMatchedStatus& info) override
-    {
-      if (info.current_count_change == 1) {
-        matched_ = info.total_count;
-        firstConnected_ = true;
-        std::cout << "Publisher matched." << std::endl;
-      } else if (info.current_count_change == -1) {
-        matched_ = info.total_count;
-        std::cout << "Publisher unmatched." << std::endl;
-      } else {
-        std::cout << info.current_count_change
-                  << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
-      }
-    }
-
-    int matched_;
-
-    bool firstConnected_;
-  } listener_;
 
   void runThread(uint32_t samples, uint32_t sleep_ms)
   {
