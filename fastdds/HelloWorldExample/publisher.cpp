@@ -314,6 +314,20 @@ public:
   bool firstConnected_;
 };
 
+class MyTopicListener final : public eprosima::fastdds::dds::TopicListener
+{
+public:
+  // override from TopicListener
+  void on_inconsistent_topic(
+          eprosima::fastdds::dds::Topic * topic,
+          eprosima::fastdds::dds::InconsistentTopicStatus status)
+  {
+    (void)topic;
+    (void)status;
+    fprintf(stderr, "TopicListener: on_inconsistent_topic\n");
+  }
+};
+
 class PubBase
 {
 public:
@@ -355,6 +369,8 @@ public:
     delete pub_listener_;
 
     delete data_writer_listener_;
+
+    delete topic_listener_;
   }
 
   //!Initialize
@@ -394,10 +410,13 @@ public:
       return false;
     }
 
+    topic_listener_ = new MyTopicListener;
+
     topic_ = participant_->create_topic(
         "HelloWorldTopic",
         type_.get_type_name(),
-        eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+        eprosima::fastdds::dds::TOPIC_QOS_DEFAULT,
+        topic_listener_);
 
     if (topic_ == nullptr) {
       return false;
@@ -459,6 +478,8 @@ private:
   MyPublisherListener * pub_listener_{nullptr};
 
   MyDataWriterListener * data_writer_listener_{nullptr};
+
+  MyTopicListener * topic_listener_{nullptr};
 
   bool stop_;
 
